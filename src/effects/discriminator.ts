@@ -28,7 +28,8 @@ const clearPrefixes = (
   params: URLSearchParams,
   prefixes: readonly string[],
 ): void => {
+  const prefixSet = new Set(prefixes);
   for (const key of [...params.keys()]) {
-    if (prefixes.includes(sectionPrefix(key))) params.delete(key);
+    if (prefixSet.has(sectionPrefix(key))) params.delete(key);
   }
 };
