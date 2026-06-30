@@ -159,6 +159,6 @@ qp.set("bugs", "x");
 // @ts-expect-error — null is not assignable to the serialize parameter
 strCodec().serialize(null);
 
-// ✗ a codec's serialize should not accept 'z' because its not a part of ['x', 'y'] array.
-//@ts-expect-error — z is not valid parameter
+// ✗ a codec's serialize should not accept 'z' because it's not part of the ['x', 'y'] array.
+// @ts-expect-error — "z" is not a valid parameter
 enumCodec(["x", "y"]).serialize("z");
