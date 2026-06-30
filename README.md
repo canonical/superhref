@@ -158,8 +158,7 @@ When a target `key` is modified, this effect clears every `controlled` prefix ex
 
 ## Development
 
-Requires Node.js 18+.
-
+Requires Node.js 20+.
 ```bash
 npm install         # install dependencies
 npm run build       # compile to dist/ (ESM + type declarations)
