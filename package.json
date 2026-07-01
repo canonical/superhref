@@ -1,0 +1,71 @@
+{
+  "name": "@canonical/superhref",
+  "version": "0.1.0",
+  "description": "Typed, composable URL search-param state.",
+  "keywords": [
+    "url",
+    "urlsearchparams",
+    "query-string",
+    "search-params",
+    "state",
+    "typescript",
+    "ssr",
+    "no-js"
+  ],
+  "license": "LGPL-3.0-only",
+  "author": {
+    "email": "webteam@canonical.com",
+    "name": "Canonical Webteam"
+  },
+  "homepage": "https://github.com/canonical/superhref#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canonical/superhref.git"
+  },
+  "bugs": {
+    "url": "https://github.com/canonical/superhref/issues"
+  },
+  "type": "module",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist",
+    "check": "npm run check:biome && npm run check:ts",
+    "check:fix": "npm run check:biome:fix && npm run check:ts",
+    "check:biome": "biome check",
+    "check:biome:fix": "biome check --write",
+    "check:ts": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepack": "npm run clean && npm run build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.9",
+    "@canonical/biome-config": "^0.28.0",
+    "@types/node": "^26.0.0",
+    "@vitest/coverage-v8": "^4.1.9",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
