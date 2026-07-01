@@ -17,24 +17,26 @@ simplest way for you to give us permission to use your contributions.
 ## Getting started
 
 1. Fork and clone the repository.
-2. Install dependencies:
+2. This project uses [pnpm](https://pnpm.io/). If you don't have it, enable it
+   with `corepack enable` (bundled with Node.js).
+3. Install dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
-3. Make your changes on a feature branch.
+4. Make your changes on a feature branch.
 
 ## Before you open a pull request
 
 Please make sure the full check suite passes locally:
 
 ```bash
-npm run check   # Biome lint + format check and TypeScript type-check
-npm test
-npm run build
+pnpm check   # Biome lint + format check and TypeScript type-check
+pnpm test
+pnpm build
 ```
 
 To automatically apply Biome's formatting and safe lint fixes, run
-`npm run check:fix`.
+`pnpm check:fix`.
 
 ## Commit and pull request guidelines
 

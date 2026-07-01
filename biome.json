@@ -3,5 +3,30 @@
   "extends": ["@canonical/biome-config"],
   "files": {
     "includes": ["src", "test", "*.json", "*.ts"]
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedGlobals": {
+              "level": "error",
+              "options": {
+                "deniedGlobals": {
+                  "window": "Not available on the server; superhref must stay isomorphic.",
+                  "document": "Not available on the server; superhref must stay isomorphic.",
+                  "navigator": "Not available on the server; superhref must stay isomorphic.",
+                  "location": "Not available on the server; superhref must stay isomorphic.",
+                  "history": "Not available on the server; superhref must stay isomorphic.",
+                  "localStorage": "Not available on the server; superhref must stay isomorphic.",
+                  "sessionStorage": "Not available on the server; superhref must stay isomorphic."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

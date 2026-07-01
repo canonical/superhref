@@ -5,12 +5,17 @@
   // to Biome rather than tsc.
   "compilerOptions": {
     "target": "ES2023",
-    "lib": ["ES2023"],
+    // superhref runs on both server and client, so it type-checks against only the
+    // universal Web platform: "DOM" supplies URL/URLSearchParams (matching Node's
+    // runtime), while `types: []` keeps @types/node's node-only globals (process,
+    // Buffer, ...) out. Browser-only globals are blocked by Biome's
+    // noRestrictedGlobals in library code (see biome.json).
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
 
-    "types": ["node"],
+    "types": [],
 
     "declaration": true,
     "declarationMap": true,

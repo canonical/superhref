@@ -158,13 +158,13 @@ When a target `key` is modified, this effect clears every `controlled` prefix ex
 
 ## Development
 
-Requires Node.js 20+.
+Requires Node.js 20+ and [pnpm](https://pnpm.io/) (run `corepack enable` if you don't have it).
 ```bash
-npm install         # install dependencies
-npm run build       # compile to dist/ (ESM + type declarations)
-npm test            # run the test suite
-npm run check       # lint, format check (Biome) and type-check
-npm run check:fix   # apply Biome autofixes and type-check
+pnpm install         # install dependencies
+pnpm build           # compile to dist/ (ESM + type declarations)
+pnpm test            # run the test suite
+pnpm check           # lint, format check (Biome) and type-check
+pnpm check:fix       # apply Biome autofixes and type-check
 ```
 
 Linting and formatting use [Biome](https://biomejs.dev/) via Canonical's shared [`@canonical/biome-config`](https://www.npmjs.com/package/@canonical/biome-config). The TypeScript configuration is a standalone `tsconfig.json` inspired by [`@canonical/typescript-config`](https://www.npmjs.com/package/@canonical/typescript-config).
