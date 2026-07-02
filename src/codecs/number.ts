@@ -5,6 +5,16 @@
 
 import type { Codec } from "../core/types/codec.js";
 
+/** Coercion options shared by every `numCodec` overload. */
+type NumberBounds = {
+  /** Reject non-integer input (it falls back to `default`). */
+  integer?: boolean;
+  /** Clamp values below `min` up to it. */
+  min?: number;
+  /** Clamp values above `max` down to it. */
+  max?: number;
+};
+
 /**
  * Number with coercion: absent, empty (`?page=`), non-numeric, or non-integer
  * (with `integer`) input falls back to `default`; out-of-range input clamps to
@@ -12,24 +22,15 @@ import type { Codec } from "../core/types/codec.js";
  * `number | undefined`. (`""` must be treated as missing — `Number("")` is `0`, a
  * classic trap for hand-edited URLs.)
  */
-export function numCodec(opts: {
-  default: number;
-  integer?: boolean;
-  min?: number;
-  max?: number;
-}): Codec<number>;
-export function numCodec(opts?: {
-  default?: number;
-  integer?: boolean;
-  min?: number;
-  max?: number;
-}): Codec<number | undefined>;
-export function numCodec(opts?: {
-  default?: number;
-  integer?: boolean;
-  min?: number;
-  max?: number;
-}): Codec<number> | Codec<number | undefined> {
+export function numCodec(
+  opts: NumberBounds & { default: number },
+): Codec<number>;
+export function numCodec(
+  opts?: NumberBounds & { default?: number },
+): Codec<number | undefined>;
+export function numCodec(
+  opts?: NumberBounds & { default?: number },
+): Codec<number> | Codec<number | undefined> {
   return {
     parse: (raw) => {
       if (raw === null || raw === "") return opts?.default;

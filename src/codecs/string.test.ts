@@ -36,16 +36,15 @@ describe("strCodec", () => {
       expect(strCodec().serialize(undefined)).toBeNull();
     });
 
-    it("empty string omits by default, but writes explicitly under a non-empty default", () => {
+    it("empty string omits with no default, but writes explicitly when one is provided", () => {
       // No default → "" and absence collapse to the same thing, so omit.
       expect(strCodec().serialize("")).toBeNull();
-      // Non-empty default → write "" explicitly so a re-parse can't resurrect the default.
+      // A provided default → write "" explicitly so a re-parse can't resurrect it.
       expect(strCodec({ default: "x" }).serialize("")).toBe("");
     });
 
-    it("a falsy ('') default does not trigger the explicit-empty write", () => {
-      // The guard is truthiness, so an empty default behaves like no default here.
-      expect(strCodec({ default: "" }).serialize("")).toBeNull();
+    it("an explicit empty-string default is honored — '' is written, not omitted", () => {
+      expect(strCodec({ default: "" }).serialize("")).toBe("");
     });
   });
 
