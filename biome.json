@@ -14,13 +14,9 @@
               "level": "error",
               "options": {
                 "deniedGlobals": {
-                  "window": "Not available on the server; superhref must stay isomorphic.",
-                  "document": "Not available on the server; superhref must stay isomorphic.",
+                  "self": "Not available on the server; superhref must stay isomorphic.",
                   "navigator": "Not available on the server; superhref must stay isomorphic.",
-                  "location": "Not available on the server; superhref must stay isomorphic.",
-                  "history": "Not available on the server; superhref must stay isomorphic.",
-                  "localStorage": "Not available on the server; superhref must stay isomorphic.",
-                  "sessionStorage": "Not available on the server; superhref must stay isomorphic."
+                  "location": "Not available on the server; superhref must stay isomorphic."
                 }
               }
             }
