@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@canonical/biome-config"],
+  "files": {
+    "includes": ["src", "test", "*.json", "*.ts"]
+  },
+  "overrides": [
+    {
+      "includes": ["src/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedGlobals": {
+              "level": "error",
+              "options": {
+                "deniedGlobals": {
+                  "self": "Not available on the server; superhref must stay isomorphic.",
+                  "navigator": "Not available on the server; superhref must stay isomorphic.",
+                  "location": "Not available on the server; superhref must stay isomorphic."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

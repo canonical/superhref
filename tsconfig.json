@@ -1,0 +1,35 @@
+{
+  // Standalone config, inspired by @canonical/typescript-config.
+  // Base (target/lib/module/strict) mirrors the Canonical config; the rest
+  // are library-appropriate additions. Unused-variable/import linting is left
+  // to Biome rather than tsc.
+  "compilerOptions": {
+    "target": "ES2023",
+    // superhref runs on both server and client, so it type-checks against only the
+    // universal Web platform. "WebWorker" supplies URL/URLSearchParams (plus fetch,
+    // console, ...) without window/document/HTML; `types: []` keeps @types/node's
+    // node-only globals out. The worker-only globals it still exposes (self,
+    // navigator, location) are blocked by Biome's noRestrictedGlobals (see biome.json).
+    "lib": ["ES2023", "WebWorker"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+
+    "types": [],
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}
