@@ -34,28 +34,3 @@ export type Codec<T> = {
   serialize: (value: T) => string | null;
   default?: T;
 };
-
-/**
- * The element type for a codec record. Uses `Codec<any>`, not `Codec<unknown>`: a `Codec`
- * is invariant in its value type (it's a `serialize` parameter), so `Codec<string>` is not
- * assignable to `Codec<unknown>`, which would make `extends Codecs` checks fail. The real
- * value type is recovered with `infer` from each concrete codec.
- */
-// biome-ignore lint/suspicious/noExplicitAny: Codec is invariant in T, so Codec<unknown> breaks 'extends Codecs' checks (see above)
-export type AnyCodec = Codec<any>;
-export type Codecs = Record<string, AnyCodec>;
-
-/**
- * The value type a codec parses to: `Codec<T>` → `T` (`never` for a non-codec).
- * @example `CodecValue<Codec<string | undefined>>` → `string | undefined`
- */
-export type CodecValue<X> = X extends Codec<infer T> ? T : never;
-
-/**
- * The parsed value type of a codec record.
- * @example `Parsed<{ page: Codec<number>; q: Codec<string | undefined> }>`
- *          → `{ page: number; q: string | undefined }`
- */
-export type Parsed<C extends Codecs> = {
-  [K in keyof C]: CodecValue<C[K]>;
-};

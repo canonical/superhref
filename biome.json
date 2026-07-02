@@ -4,6 +4,16 @@
   "files": {
     "includes": ["src", "test", "*.json", "*.ts"]
   },
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noDoubleEquals": {
+          "level": "error",
+          "options": { "ignoreNull": false }
+        }
+      }
+    }
+  },
   "overrides": [
     {
       "includes": ["src/**"],
