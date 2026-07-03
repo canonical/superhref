@@ -19,15 +19,15 @@ describe("strCodec", () => {
       expect(strCodec({ default: "x" }).parse(null)).toBe("x");
     });
 
-    it("an explicit empty value parses to '' — NOT the default", () => {
-      // `?key=` is present-but-empty; only true absence (null) falls back to default.
+    it("an explicit empty value parses to '' rather than the default", () => {
+      // `?key=` means present and empty; only true absence (null) falls back to the default.
       expect(strCodec().parse("")).toBe("");
       expect(strCodec({ default: "x" }).parse("")).toBe("");
     });
   });
 
   describe("serialize", () => {
-    it("returns a non-empty string as-is", () => {
+    it("returns a populated string unchanged", () => {
       expect(strCodec().serialize("hello")).toBe("hello");
       expect(strCodec().serialize("a b/c&d")).toBe("a b/c&d");
     });
@@ -37,23 +37,23 @@ describe("strCodec", () => {
     });
 
     it("empty string omits with no default, but writes explicitly when one is provided", () => {
-      // No default → "" and absence collapse to the same thing, so omit.
+      // Without a default, "" and absence collapse to the same thing, so omit the key.
       expect(strCodec().serialize("")).toBeNull();
-      // A provided default → write "" explicitly so a re-parse can't resurrect it.
+      // With a default, write "" explicitly so parsing again keeps the empty string.
       expect(strCodec({ default: "x" }).serialize("")).toBe("");
     });
 
-    it("an explicit empty-string default is honored — '' is written, not omitted", () => {
+    it("an explicit empty string default is honored: '' is written, not omitted", () => {
       expect(strCodec({ default: "" }).serialize("")).toBe("");
     });
   });
 
-  it("exposes its default for read-side fallback", () => {
+  it("exposes its default for fallback on read", () => {
     expect(strCodec({ default: "x" }).default).toBe("x");
     expect(strCodec().default).toBeUndefined();
   });
 
-  it("round-trips a plain value through serialize → parse", () => {
+  it("a plain value survives serialize then parse", () => {
     const c = strCodec();
     expect(c.parse(c.serialize("hello"))).toBe("hello");
   });

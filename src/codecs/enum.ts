@@ -6,14 +6,33 @@
 import type { Codec } from "../core/types/codec.js";
 
 /**
- * One of a fixed set of string literals; anything else coerces to `default`.
- * `enumCodec(["a", "b"])` is `Codec<"a" | "b" | undefined>`; with a `default` it is
- * `Codec<"a" | "b">`.
+ * A codec for one of a fixed set of string literals.
+ *
+ * `parse` accepts only members of `values`; anything else, including an
+ * absent key, resolves to `default`. The parsed value keeps the literal
+ * union type of `values`, so `enumCodec(["a", "b"], { default: "a" })`
+ * produces `Codec<"a" | "b">`.
+ *
+ * @typeParam T The accepted literals, inferred from `values`.
+ * @param values The accepted string literals.
+ * @param opts Options with a required `default`.
+ * @returns A codec whose parsed value is always one of `values`, because
+ * anything else resolves to `default`.
  */
 export function enumCodec<const T extends readonly string[]>(
   values: T,
   opts: { default: T[number] },
 ): Codec<T[number]>;
+/**
+ * A codec for one of a fixed set of string literals. Without a `default`,
+ * input outside `values` and absent keys parse to `undefined`, so
+ * `enumCodec(["a", "b"])` produces `Codec<"a" | "b" | undefined>`.
+ *
+ * @typeParam T The accepted literals, inferred from `values`.
+ * @param values The accepted string literals.
+ * @param opts Options.
+ * @returns A codec whose parsed value is one of `values` or `undefined`.
+ */
 export function enumCodec<const T extends readonly string[]>(
   values: T,
   opts?: { default?: T[number] },

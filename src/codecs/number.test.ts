@@ -15,30 +15,30 @@ describe("numCodec", () => {
       expect(numCodec().parse("-5")).toBe(-5);
     });
 
-    it("keeps 0 — it is a real value, not 'missing'", () => {
+    it("keeps 0, a real value rather than a missing one", () => {
       expect(numCodec().parse("0")).toBe(0);
     });
 
-    it("treats both absence AND empty string as missing → default", () => {
-      // `Number("")` is 0 — a classic hand-edited-URL trap — so "" must mean missing.
+    it("treats both absence and empty string as missing, so both yield the default", () => {
+      // `Number("")` is 0, a classic trap with URLs edited by hand, so "" must mean missing.
       expect(numCodec({ default: 1 }).parse(null)).toBe(1);
       expect(numCodec({ default: 1 }).parse("")).toBe(1);
       expect(numCodec().parse("")).toBeUndefined();
     });
 
-    it("falls back to default on non-numeric / non-finite input", () => {
+    it("falls back to the default when input is not a finite number", () => {
       expect(numCodec({ default: 1 }).parse("abc")).toBe(1);
       expect(numCodec({ default: 1 }).parse("Infinity")).toBe(1);
       expect(numCodec({ default: 1 }).parse("1e999")).toBe(1); // overflows to Infinity
     });
 
-    it("with `integer`, coerces non-integers to the default", () => {
+    it("with `integer`, coerces fractional input to the default", () => {
       const c = numCodec({ default: 1, integer: true });
       expect(c.parse("3")).toBe(3);
       expect(c.parse("2.5")).toBe(1);
     });
 
-    it("clamps out-of-range input to min / max", () => {
+    it("clamps input outside the bounds to min or max", () => {
       const c = numCodec({ min: 1, max: 10 });
       expect(c.parse("-4")).toBe(1);
       expect(c.parse("99")).toBe(10);
@@ -69,12 +69,12 @@ describe("numCodec", () => {
     });
   });
 
-  it("exposes its default for read-side fallback", () => {
+  it("exposes its default for fallback on read", () => {
     expect(numCodec({ default: 1 }).default).toBe(1);
     expect(numCodec().default).toBeUndefined();
   });
 
-  it("round-trips through serialize → parse, including 0", () => {
+  it("survives serialize then parse, including 0", () => {
     const c = numCodec({ default: 1 });
     expect(c.parse(c.serialize(0))).toBe(0);
     expect(c.parse(c.serialize(42))).toBe(42);

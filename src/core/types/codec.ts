@@ -4,20 +4,31 @@
  */
 
 /**
- * An encode/decode pair for a single search-param key.
- * `parse` turns the URL value into a typed value; `serialize` turns it back (or
- * `null` to omit the key).
+ * An encode and decode pair for a single search parameter key.
  *
- * Contract notes:
- * - `parse` must never throw on hostile input (hand-edited URLs); coerce instead.
- * - Codecs deal in PLAIN (already-decoded) values: the engine reads/writes through
- *   `URLSearchParams`, which percent-decodes on read and percent-encodes on write.
- *   So `parse` receives a decoded string and `serialize` returns a plain string.
- * - `serialize(v) === null` means "this value is represented by key absence".
- *   A codec must never map two *distinct* representable values to absence.
+ * A codec deals in plain, already decoded text. The engine reads and writes
+ * through `URLSearchParams`, which applies percent decoding on read and
+ * percent encoding on write, so `parse` receives a readable string and
+ * `serialize` returns one.
  */
 export type Codec<T> = {
+  /**
+   * Turns the raw URL value into a typed value. Receives `null` when the key
+   * is absent from the URL. It must never throw, even on hostile input such
+   * as a URL edited by hand; it coerces invalid input to a safe value
+   * instead.
+   */
   parse: (raw: string | null) => T;
+  /**
+   * Turns a typed value back into URL text. Returning `null` represents the
+   * value by leaving the key out of the URL entirely. A codec must never map
+   * two distinct representable values to absence, because they would become
+   * indistinguishable when the URL is parsed again.
+   */
   serialize: (value: T) => string | null;
+  /**
+   * The value that absent or invalid input resolves to.
+   * @defaultValue `undefined`, so an absent key parses to `undefined`.
+   */
   default?: T;
 };

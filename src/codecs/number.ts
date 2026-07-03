@@ -7,24 +7,45 @@ import type { Codec } from "../core/types/codec.js";
 
 /** Coercion options shared by every `numCodec` overload. */
 type NumberBounds = {
-  /** Reject non-integer input (it falls back to `default`). */
+  /**
+   * When true, input that is not an integer resolves to `default`.
+   * @defaultValue false, so fractional numbers are accepted.
+   */
   integer?: boolean;
-  /** Clamp values below `min` up to it. */
+  /**
+   * The lowest accepted value. Parsed values below it clamp up to it.
+   * @defaultValue undefined, so there is no lower bound.
+   */
   min?: number;
-  /** Clamp values above `max` down to it. */
+  /**
+   * The highest accepted value. Parsed values above it clamp down to it.
+   * @defaultValue undefined, so there is no upper bound.
+   */
   max?: number;
 };
 
 /**
- * Number with coercion: absent, empty (`?page=`), non-numeric, or non-integer
- * (with `integer`) input falls back to `default`; out-of-range input clamps to
- * `min`/`max`. With a `default` the value type is `number`, otherwise
- * `number | undefined`. (`""` must be treated as missing — `Number("")` is `0`, a
- * classic trap for hand-edited URLs.)
+ * A number codec that coerces instead of throwing.
+ *
+ * Input that is absent, empty (`?page=`), not numeric, or fractional while
+ * `integer` is set resolves to `default`. Input outside `min` or `max` clamps
+ * to the nearest bound. The empty value counts as missing on purpose, because
+ * `Number("")` evaluates to `0`, a classic trap with URLs edited by hand.
+ *
+ * @param opts Coercion options with a required `default`.
+ * @returns A codec whose parsed value is always a `number`, because absent or
+ * invalid input resolves to `default`.
  */
 export function numCodec(
   opts: NumberBounds & { default: number },
 ): Codec<number>;
+/**
+ * A number codec that coerces instead of throwing. Without a `default`,
+ * absent or invalid input parses to `undefined`.
+ *
+ * @param opts Coercion options.
+ * @returns A codec whose parsed value is a `number` or `undefined`.
+ */
 export function numCodec(
   opts?: NumberBounds & { default?: number },
 ): Codec<number | undefined>;

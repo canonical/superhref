@@ -15,7 +15,7 @@ describe("enumCodec", () => {
       expect(enumCodec(STATUS).parse("high")).toBe("high");
     });
 
-    it("coerces a non-member to the default (or undefined)", () => {
+    it("coerces a value outside the set to the default (or undefined)", () => {
       expect(enumCodec(STATUS).parse("nope")).toBeUndefined();
       expect(enumCodec(STATUS, { default: "low" }).parse("nope")).toBe("low");
     });
@@ -25,7 +25,7 @@ describe("enumCodec", () => {
       expect(enumCodec(STATUS, { default: "low" }).parse(null)).toBe("low");
     });
 
-    it("membership is exact and case-sensitive", () => {
+    it("membership is exact and respects letter case", () => {
       expect(enumCodec(STATUS).parse("HIGH")).toBeUndefined(); // wrong case
       expect(enumCodec(STATUS).parse("hig")).toBeUndefined(); // substring, not a member
       expect(enumCodec(STATUS).parse("")).toBeUndefined(); // empty, not a member
@@ -50,12 +50,12 @@ describe("enumCodec", () => {
     });
   });
 
-  it("exposes its default for read-side fallback", () => {
+  it("exposes its default for fallback on read", () => {
     expect(enumCodec(STATUS, { default: "low" }).default).toBe("low");
     expect(enumCodec(STATUS).default).toBeUndefined();
   });
 
-  it("round-trips a member through serialize → parse", () => {
+  it("a member survives serialize then parse", () => {
     const c = enumCodec(STATUS, { default: "low" });
     expect(c.parse(c.serialize("high"))).toBe("high");
   });
