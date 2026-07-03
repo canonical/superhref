@@ -12,7 +12,7 @@ const schema = {
   panel: strCodec({ default: "all" }),
   bugs: { page: numCodec({ default: 1 }), q: strCodec() },
 };
-const ctx = { schema, actions: {} };
+const ctx = { schema, effects: [], actions: {} };
 const url = new URL("https://x.test/");
 
 // Any subset of keys may be patched; `null` deletes a key, `undefined` leaves

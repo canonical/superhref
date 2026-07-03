@@ -5,16 +5,26 @@
 
 import { describe, expect, it } from "vitest";
 
-import { enumCodec, strCodec, superhref } from "../src/index.js";
+import {
+  discriminatorEffect,
+  enumCodec,
+  strCodec,
+  superhref,
+} from "../src/index.js";
 
-const app = superhref({
-  panel: enumCodec(["overview", "version", "bugs"]),
-  version: { id: strCodec() },
-  bugs: {
-    severity: enumCodec(["low", "medium", "high", "critical"]),
-    status: enumCodec(["open", "closed"]),
+const app = superhref(
+  {
+    panel: enumCodec(["overview", "version", "bugs"]),
+    version: { id: strCodec() },
+    bugs: {
+      severity: enumCodec(["low", "medium", "high", "critical"]),
+      status: enumCodec(["open", "closed"]),
+    },
   },
-});
+  {
+    effects: [discriminatorEffect("panel", ["overview", "version", "bugs"])],
+  },
+);
 
 const at = (search = ""): URL => new URL(`https://example.test/app${search}`);
 
@@ -70,6 +80,21 @@ describe("patch", () => {
     expect(app.patch(at("?panel=bugs"), { bugs: { nope: 1 } }).search).toBe(
       "?panel=bugs",
     );
+  });
+});
+
+describe("discriminator effect", () => {
+  it("clears sibling sections when the panel changes", () => {
+    const start = at("?panel=bugs&bugs.severity=high&version.id=1.2.3");
+    const url = app.patch(start, { panel: "version" });
+    // bugs.* cleared (a sibling), version.* kept, panel updated.
+    expect(url.search).toBe("?panel=version&version.id=1.2.3");
+  });
+
+  it("does not fire when the panel is not touched", () => {
+    const start = at("?panel=bugs&bugs.severity=high");
+    const url = app.patch(start, { bugs: { severity: "low" } });
+    expect(url.search).toBe("?panel=bugs&bugs.severity=low");
   });
 });
 

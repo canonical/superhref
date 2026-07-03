@@ -12,6 +12,7 @@
 import { enumCodec } from "./codecs/enum.js";
 import { numCodec } from "./codecs/number.js";
 import { strCodec } from "./codecs/string.js";
+import { discriminatorEffect } from "./effects/discriminator.js";
 import { withActions } from "./patterns/with-actions.js";
 import { superhref } from "./superhref.js";
 import type { Equal, ExpectTrue } from "./type-testing/expect.js";
@@ -25,6 +26,7 @@ const sh = superhref(
     ),
   },
   {
+    effects: [discriminatorEffect("panel", ["bugs"])],
     // A top level action's `patch` and `state` are typed from the schema with
     // no annotation.
     actions: { reset: (patch) => patch({ panel: null, bugs: null }) },

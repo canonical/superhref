@@ -10,7 +10,8 @@ import { isCodec, sectionOf } from "./codec-guard.js";
 import { innerKey } from "./keys.js";
 
 /**
- * Applies a nested partial update and returns a new URL.
+ * Applies a nested partial update and returns a new URL. It writes the named
+ * keys, records the touched keys, and then runs the effects once.
  *
  * A leaf `null` deletes a key; `undefined` or an absent key leaves it
  * unchanged. A section set to `null` clears every key the section owns,
@@ -30,6 +31,7 @@ export function patch<C extends SuperhrefConfig>(
 ): URL {
   const next = new URL(url.href);
   const params = next.searchParams;
+  const touched: string[] = [];
 
   for (const [key, valueToWrite] of Object.entries(partial)) {
     if (valueToWrite === undefined) continue;
@@ -39,12 +41,15 @@ export function patch<C extends SuperhrefConfig>(
     if (!schemaValue) continue;
 
     if (isCodec(schemaValue)) {
+      touched.push(key);
       applyKey(params, key, schemaValue, valueToWrite);
     } else {
       const { codecs } = sectionOf(schemaValue);
       if (valueToWrite === null) {
         for (const [subKey, codec] of Object.entries(codecs)) {
-          applyKey(params, innerKey(key, subKey), codec, null);
+          const full = innerKey(key, subKey);
+          touched.push(full);
+          applyKey(params, full, codec, null);
         }
       } else {
         for (const [subKey, subValue] of Object.entries(valueToWrite)) {
@@ -53,12 +58,15 @@ export function patch<C extends SuperhrefConfig>(
           const codec = codecs[subKey];
           if (!codec) continue;
 
-          applyKey(params, innerKey(key, subKey), codec, subValue);
+          const full = innerKey(key, subKey);
+          touched.push(full);
+          applyKey(params, full, codec, subValue);
         }
       }
     }
   }
 
+  for (const eff of ctx.effects) eff(params, touched);
   return next;
 }
 

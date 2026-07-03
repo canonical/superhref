@@ -25,6 +25,7 @@ type Schema = typeof schema;
 const bound = bind(
   {
     schema,
+    effects: [],
     actions: {
       reset: (
         patch: SuperhrefPatch<Schema>,

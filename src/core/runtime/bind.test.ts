@@ -14,6 +14,7 @@ import type {
   SuperhrefPatch,
 } from "../types/config.js";
 import type { Ctx } from "../types/context.js";
+import type { SuperhrefEffect } from "../types/effect.js";
 import type { Empty } from "../types/util.js";
 import { bind } from "./bind.js";
 
@@ -23,11 +24,13 @@ const makeCtx = <
 >(
   schema: C,
   opts: {
+    effects?: SuperhrefEffect[];
     actions?: A &
       ActionMap<SuperhrefPatch<NoInfer<C>>, SuperhrefParsed<NoInfer<C>>>;
   } = {},
 ): Ctx<C, A> => ({
   schema,
+  effects: opts.effects ?? [],
   actions: (opts.actions ?? {}) as A,
 });
 
