@@ -6,11 +6,17 @@
 import type { AnyCodec } from "../types/codec.js";
 
 /**
- * Write one full URL key. `undefined` leaves the key unchanged; `null` deletes it.
- * A `serialize` returning `null` also deletes (a codec's way of saying "this value has
- * no URL form"). Otherwise the value is written verbatim — a value equal to the
- * codec's `default` still appears in the URL; use `null` if you want the key absent.
- * `URLSearchParams.set` percent-encodes the string, so codecs return plain values.
+ * Writes one full URL key. `undefined` leaves the key unchanged and `null`
+ * deletes it. A `serialize` that returns `null` also deletes, which is a
+ * codec's way of saying the value has no URL form. Any other value is
+ * written verbatim, so a value equal to the codec's `default` still appears
+ * in the URL; use `null` to make the key absent. `URLSearchParams.set`
+ * applies percent encoding, so codecs return plain values.
+ *
+ * @param params The search params to mutate in place.
+ * @param fullKey The full URL key to write.
+ * @param codec The codec that serializes the value.
+ * @param value The value to write.
  */
 export const writeKey = (
   params: URLSearchParams,

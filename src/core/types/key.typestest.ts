@@ -6,7 +6,8 @@
 import type { ExpectFalse, ExpectTrue } from "../../type-testing/expect.js";
 import type { ValidKey } from "./key.js";
 
-// A valid key is a letter followed by letters, digits, or _ ~ -.
+// A valid key is a letter followed by letters, digits, or the characters
+// `_`, `~`, and `-`.
 type _plain = ExpectTrue<ValidKey<"page">>;
 type _singleLetter = ExpectTrue<ValidKey<"q">>;
 type _fullCharset = ExpectTrue<ValidKey<"Sort_by-2~x">>;

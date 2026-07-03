@@ -21,8 +21,9 @@ const config = {
 const ctx = { config, actions: {} };
 const url = new URL("https://x.test/");
 
-// Any subset of keys may be patched; `null` deletes a key, `undefined` is a
-// no-op, and a section takes a nested partial (or `null` to clear it whole).
+// Any subset of keys may be patched; `null` deletes a key, `undefined` leaves
+// it unchanged, and a section takes a nested partial (or `null` to clear it
+// whole).
 const next = patch(ctx, url, {});
 patch(ctx, url, { panel: "bugs" });
 patch(ctx, url, { panel: undefined });
@@ -41,7 +42,8 @@ type _wrongSectionValue = ExpectFalse<
 type _sectionPayloadOnRoot = ExpectFalse<
   Extends<{ panel: { page: 2 } }, Input>
 >;
-// ...and a key the config doesn't own is rejected. That's an excess-property
-// check, which exists only at a literal call site — no `Extends` equivalent.
+// ...and a key the config doesn't own is rejected. That's an excess property
+// check, which exists only at a literal call site, so there is no `Extends`
+// equivalent.
 // @ts-expect-error a key the config doesn't own is rejected
 patch(ctx, url, { rogue: "x" });

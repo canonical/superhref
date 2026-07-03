@@ -43,7 +43,7 @@ describe("patch", () => {
     });
 
     it("writes a value verbatim, even when it equals the codec's default", () => {
-      // values are written verbatim — page=1 stays even though it equals the default (use null to remove)
+      // values are written verbatim: page=1 stays even though it equals the default (use null to remove)
       expect(patchAt("?bugs.page=3", { bugs: { page: 1 } })).toBe(
         "?bugs.page=1",
       );

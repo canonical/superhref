@@ -3,6 +3,13 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
+/**
+ * Compile time validators for a section: key syntax, reserved names, and
+ * collisions between codec keys and action names. Each validator turns a
+ * problem into an error string type at the offending key, so the compiler
+ * reports it exactly where the fix belongs.
+ */
+
 import type { ActionsOf, CodecsOf } from "../config.js";
 import type { ValidKey } from "../key.js";
 
@@ -14,9 +21,10 @@ export type ReservedActionName = "patch" | "set";
 
 /**
  * Maps every codec key in `S` and the reserved handle methods (`patch`/`set`) to an
- * error-string type, all optional. Used as a constraint on a section's action map: an
+ * error string type, all optional. Used as a constraint on a section's action map: an
  * action whose name collides with a codec key or a handle method would have to BE that
- * string, and a function isn't — so it's a compile error at that action.
+ * string, and a function is not a string, so the clash becomes a compile error at
+ * that action.
  */
 export type SectionActionCollisions<S> = {
   [N in
@@ -28,7 +36,7 @@ export type SectionActionCollisions<S> = {
  * Checks each key of a codecs map. A key with invalid syntax or a reserved name
  * (`patch`/`set`/`codecs`/`actions`) has its value replaced by an error string; a valid
  * key keeps its codec. Since a codec can't BE that string, a bad codec key fails to
- * type-check at that key, while the other keys keep their precise types.
+ * compile at that key, while the other keys keep their precise types.
  */
 export type ValidateCodecs<S> = {
   [K in keyof S]: ValidKey<K & string> extends true
@@ -57,7 +65,7 @@ export type SectionHasProblem<V> = true extends
   ? true
   : false;
 
-/** First-matching message for a flagged section (only evaluated for bad sections). */
+/** The first matching message for a flagged section (only evaluated for bad sections). */
 export type SectionMsg<C, K extends keyof C> = [BadCodecKeys<C[K]>] extends [
   never,
 ]

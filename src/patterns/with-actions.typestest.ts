@@ -41,7 +41,7 @@ type _extraParam = ExpectTrue<Equal<Parameters<Search>[2], string>>;
 type _result = ExpectTrue<Equal<ReturnType<Search>, string>>;
 
 // The actions argument is checked against the action map AND the collision
-// constraint — an action named after a codec key or the reserved patch/set
+// constraint: an action named after a codec key or the reserved patch/set
 // can't satisfy the error-string slot the constraint puts at that name.
 // (Bad codec keys themselves are pinned in validate/section.typestest.ts.)
 type SectionCodecs = { page: Codec<number | undefined> };
@@ -57,8 +57,9 @@ type _reservedNameClash = ExpectFalse<
 type PatchArg = Parameters<SectionPatch<Parsed<{ page: Codec<number> }>>>[0];
 type _patchValueOk = ExpectTrue<Extends<{ page: 2 }, PatchArg>>;
 type _patchWrongValue = ExpectFalse<Extends<{ page: "one" }, PatchArg>>;
-// ...and rejects keys outside the section. That's an excess-property check,
-// which exists only at a literal call site — no `Extends` equivalent.
+// ...and rejects keys outside the section. That's an excess property check,
+// which exists only at a literal call site, so there is no `Extends`
+// equivalent.
 withActions(
   { page: numCodec({ default: 1 }) },
   {

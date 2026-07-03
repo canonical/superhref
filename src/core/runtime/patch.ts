@@ -10,11 +10,18 @@ import { innerKey } from "./keys.js";
 import { writeKey } from "./write-key.js";
 
 /**
- * Apply a nested partial update and return a new URL.
- * A leaf `null` deletes a key; `undefined` (or an absent key)
- * leaves it unchanged. A section set to `null` clears every key
- * under its prefix; `undefined`/absence leaves the section unchanged.
- * Keys the config doesn't own are never touched.
+ * Applies a nested partial update and returns a new URL.
+ *
+ * A leaf `null` deletes a key; `undefined` or an absent key leaves it
+ * unchanged. A section set to `null` clears every key under its prefix,
+ * while `undefined` or absence leaves the section unchanged. Keys the
+ * config doesn't own are never touched.
+ *
+ * @typeParam C The config shape the payload is checked against.
+ * @param ctx The runtime context carrying the config.
+ * @param url The URL to derive from; it is not modified.
+ * @param partial The nested partial update.
+ * @returns A new URL with the update applied.
  */
 export const patch = <C extends SuperhrefConfig>(
   ctx: Ctx<C>,

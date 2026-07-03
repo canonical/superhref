@@ -32,7 +32,7 @@ describe("clear", () => {
     );
   });
 
-  it("is a no-op when the config owns nothing in the URL", () => {
+  it("leaves the URL unchanged when the config owns nothing in it", () => {
     expect(clearAt("?utm=x")).toBe("?utm=x");
   });
 

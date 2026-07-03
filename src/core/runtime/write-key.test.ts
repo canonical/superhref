@@ -27,11 +27,11 @@ describe("writeKey", () => {
   });
 
   it("undefined leaves the key unchanged", () => {
-    expect(write(strCodec(), undefined, "k=hi")).toBe("?k=hi"); // present → stays
-    expect(write(strCodec(), undefined, "")).toBe(""); //         absent  → stays absent
+    expect(write(strCodec(), undefined, "k=hi")).toBe("?k=hi"); // present stays
+    expect(write(strCodec(), undefined, "")).toBe(""); //         absent stays absent
   });
 
-  it("undefined does NOT reset to the default — it's a no-op even for a defaulted codec", () => {
+  it("undefined does not reset to the default, even for a defaulted codec", () => {
     expect(write(numCodec({ default: 5 }), undefined, "k=2")).toBe("?k=2"); // unchanged, not 5
   });
 

@@ -3,8 +3,6 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// Type-level check that a string is a valid URL key: /^[A-Za-z][A-Za-z0-9_~-]*$/.
-
 type Lower =
   | "a"
   | "b"
@@ -45,8 +43,10 @@ type AllKeyChars<S extends string> = S extends ""
     : false;
 
 /**
- * `true` if `S` matches the URL-key regex (letter first, then key chars).
- * @example `ValidKey<"sort_by">` → `true`; `ValidKey<"a.b">` → `false`
+ * `true` when `S` is a valid URL key: a letter followed by letters, digits,
+ * or the characters `_`, `~`, and `-`, matching the regex
+ * `/^[A-Za-z][A-Za-z0-9_~-]*$/`.
+ * @example `ValidKey<"sort_by">` resolves to `true`; `ValidKey<"a.b">` resolves to `false`.
  */
 export type ValidKey<S extends string> = S extends `${Letter}${string}`
   ? AllKeyChars<S>

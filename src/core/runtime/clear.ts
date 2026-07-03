@@ -7,7 +7,13 @@ import { isCodec, sectionOf } from "./codec-guard.js";
 import type { Ctx } from "./context.js";
 import { innerKey } from "./keys.js";
 
-/** Remove every owned key (all roots + all section keys). */
+/**
+ * Removes every owned key: all roots and all section keys.
+ *
+ * @param ctx The runtime context carrying the config.
+ * @param url The URL to derive from; it is not modified.
+ * @returns A new URL without any owned keys.
+ */
 export const clear = (ctx: Ctx, url: URL): URL => {
   const next = new URL(url.href);
   const params = next.searchParams;

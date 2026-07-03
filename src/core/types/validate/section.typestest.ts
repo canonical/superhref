@@ -22,7 +22,7 @@ type Str = Codec<string>;
 // ValidateCodecs keeps a valid key's codec...
 type Checked = ValidateCodecs<{ page: Num; "a.b": Num; patch: Num }>;
 type _validKept = ExpectTrue<Equal<Checked["page"], Num>>;
-// ...replaces an invalid key's value with its error-string type...
+// ...replaces an invalid key's value with its error string type...
 type _invalidFlagged = ExpectTrue<
   Equal<
     Checked["a.b"],
@@ -40,8 +40,8 @@ type _cleanWithActions = ExpectFalse<
   SectionHasProblem<{ codecs: { page: Num }; actions: { go: () => string } }>
 >;
 
-// Each problem class is caught: codec key × action name, reserved codec key,
-// reserved action name, invalid key syntax.
+// Each problem class is caught: a codec key colliding with an action name, a
+// reserved codec key, a reserved action name, and invalid key syntax.
 type _codecActionClash = ExpectTrue<
   SectionHasProblem<{ codecs: { page: Num }; actions: { page: () => string } }>
 >;
@@ -55,7 +55,7 @@ type _reservedActionName = ExpectTrue<
 type _invalidCodecKey = ExpectTrue<SectionHasProblem<{ "a.b": Num }>>;
 
 // SectionMsg is `never` for a clean section, names the section and the
-// offending key otherwise, and reports the invalid-key problem first when
+// offending key otherwise, and reports the invalid key problem first when
 // several apply.
 type Cfg = {
   clean: { page: Num };

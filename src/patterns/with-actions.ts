@@ -11,11 +11,21 @@ import type {
 } from "../core/types/validate/section.js";
 
 /**
- * Build a section that has actions. Passing the codecs and actions as two separate
- * arguments lets each action's `patch` and `state` be typed from the codecs
- * automatically — no annotation needed. This is the only way to attach actions to a
- * section; a section without actions is just a bare codecs map.
+ * Builds a section that has actions. Passing the codecs and actions as two
+ * separate arguments lets each action's `patch` and `state` be typed from
+ * the codecs automatically, with no annotation needed. This is the only way
+ * to attach actions to a section; a section without actions is just a bare
+ * codecs map.
  *
+ * @typeParam S The section's codecs map.
+ * @typeParam A The action map, inferred from `actions`.
+ * @param codecs The section's codecs. The `ValidateCodecs<S>` intersection
+ * flags a bad or reserved codec key at the key itself.
+ * @param actions The section's actions. The intersection both infers `A` and
+ * gives each action's `patch` and `state` their types, while
+ * `SectionActionCollisions<S>` rejects an action whose name collides with a
+ * codec key or the reserved `patch` and `set`.
+ * @returns The `{ codecs, actions }` section value.
  * @example
  *   const range = withActions(
  *     { start: dateIsoCodec(), end: dateIsoCodec() },
@@ -29,11 +39,6 @@ export const withActions = <
   S extends Codecs,
   A extends SectionActionMap<Parsed<S>>,
 >(
-  // `S &` pins `S` to the codecs; `& ValidateCodecs<S>` flags a bad or reserved codec key
-  // at the key itself.
   codecs: S & ValidateCodecs<S>,
-  // This intersection both infers `A` and gives each action's `patch`/`state` their types;
-  // `SectionActionCollisions<S>` rejects an action whose name collides with a codec key or
-  // the reserved `patch`/`set`.
   actions: A & SectionActionMap<Parsed<S>> & SectionActionCollisions<S>,
 ): Section<S, A> => ({ codecs, actions });

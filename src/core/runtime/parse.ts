@@ -9,9 +9,14 @@ import type { Ctx } from "./context.js";
 import { innerKey } from "./keys.js";
 
 /**
- * Read a URL into nested state (one value per root key, one sub-object per section).
- * Keyed by the RAW URL key — `URLSearchParams.get` percent-decodes, so codecs
- * receive plain values. The result shape is derived from the config `C`.
+ * Reads a URL into nested state: one value per root key and one nested
+ * object per section, keyed by the raw URL key. `URLSearchParams.get`
+ * applies percent decoding, so codecs receive plain values.
+ *
+ * @typeParam C The config shape the result is derived from.
+ * @param ctx The runtime context carrying the config.
+ * @param url The URL to read; it is not modified.
+ * @returns The parsed state, shaped by the config.
  */
 export const parse = <C extends SuperhrefConfig>(
   ctx: Ctx<C>,
