@@ -3,9 +3,10 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// `BoundSuperhref` and `SectionHandle` are Pretty-wrapped intersections and `set`
-// is an overload set, so the bound object is asserted by usage — leaf types, key
-// sets, and accepted/rejected calls — rather than whole-shape `Equal`.
+// `BoundSuperhref` and `SectionHandle` are intersections wrapped in `Pretty`
+// and `set` is an overload set, so the bound object is asserted by usage
+// (leaf types, key sets, and accepted or rejected calls) rather than by an
+// `Equal` over the whole shape.
 
 import { enumCodec } from "../../codecs/enum.js";
 import { numCodec } from "../../codecs/number.js";
@@ -79,8 +80,9 @@ type _clear = ExpectTrue<Equal<typeof bound.clear, () => string>>;
 // `patch` takes a nested partial and returns the new search string.
 const patched = bound.patch({ q: "crash", bugs: { page: 2 } });
 type _patchResult = ExpectTrue<Equal<typeof patched, string>>;
-// A key the config doesn't own is rejected. That's an excess-property check,
-// which exists only at a literal call site — no `Extends` equivalent.
+// A key the config doesn't own is rejected. That's an excess property check,
+// which exists only at a literal call site, so there is no `Extends`
+// equivalent.
 // @ts-expect-error a key the config doesn't own is rejected
 bound.patch({ bogus: 1 });
 
@@ -109,7 +111,8 @@ type _unknownSectionKey = ExpectFalse<
   Extends<SectionSet, (key: "nope", value: never) => string>
 >;
 
-// A section handle patches only its own keys (excess-property check again).
+// A section handle patches only its own keys (an excess property check
+// again).
 bound.bugs.patch({ page: null, severity: "low" });
 // @ts-expect-error a key outside the section is rejected
 bound.bugs.patch({ q: "x" });

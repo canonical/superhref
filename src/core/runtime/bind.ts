@@ -26,10 +26,18 @@ import { patch } from "./patch.js";
 type Dynamic = Record<string, any>;
 
 /**
- * Creates a queryParams model bound to the provided url with ability to read the
- * value of each parameter `.parameterName` or parameter of a section `.sectionName.parameterName`
- * It also provides methods to generate new url string. For example `.set('parameter', value)`
- * will return a new url string with the parameter updated. The model itself is not mutated
+ * Creates a query params model bound to the provided URL. The value of each
+ * parameter can be read as `.parameterName`, or as
+ * `.sectionName.parameterName` inside a section. The model also provides
+ * methods that produce a new URL search string; for example
+ * `.set("parameter", value)` returns a new search string with that parameter
+ * updated. The model itself is never mutated.
+ *
+ * @typeParam C The config shape.
+ * @typeParam A The top level action map.
+ * @param ctx The runtime context carrying the config and actions.
+ * @param url The URL the model reads from; it is not modified.
+ * @returns The bound object with values, section handles, and methods.
  */
 export const bind = <
   C extends SuperhrefConfig,
