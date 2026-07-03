@@ -53,9 +53,10 @@
     "check:biome": "biome check",
     "check:biome:fix": "biome check --write",
     "check:ts": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run && pnpm run typetest",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "typetest": "tsc --noEmit -p tsconfig.typetest.json",
     "prepack": "pnpm run clean && pnpm run build"
   },
   "devDependencies": {

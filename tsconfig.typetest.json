@@ -1,0 +1,8 @@
+{
+  // Type-level tests. Kept out of the normal build/check (see the `exclude` in
+  // tsconfig.json and tsconfig.build.json) and run on demand via `pnpm typetest`.
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": true },
+  "include": ["src/**/*.typestest.ts", "src/type-testing"],
+  "exclude": []
+}

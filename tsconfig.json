@@ -31,5 +31,7 @@
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  // Type-level tests are checked separately via `pnpm typetest` (tsconfig.typetest.json).
+  "exclude": ["src/**/*.typestest.ts", "src/type-testing"]
 }
