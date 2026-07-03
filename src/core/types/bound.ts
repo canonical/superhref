@@ -39,9 +39,7 @@ type Values<S extends Codecs> = { [K in keyof S]: CodecValue<S[K]> };
 
 /**
  * A section handle: its parsed values (under their raw keys), its bound actions, and a
- * `patch`/`set` pair. `null` deletes a key (on both); `undefined` or an absent key is a
- * no-op.
- * @example `set("page", 2)` ✓ — `set("page", null)` deletes — `set("page", "2")` ✗
+ * `patch`/`set` pair.
  */
 export type SectionHandle<V> = Pretty<
   Values<CodecsOf<V>> &

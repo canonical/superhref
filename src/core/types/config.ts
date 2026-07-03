@@ -3,7 +3,7 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import type { KeySep } from "../runtime/keys.js";
+import type { Dotted } from "../runtime/keys.js";
 import type { AnyCodec, Codecs, CodecValue, Parsed } from "./codec.js";
 import type { Section } from "./section.js";
 import type { Empty, Pretty } from "./util.js";
@@ -69,5 +69,5 @@ export type SuperhrefPatch<C extends SuperhrefConfig> = (
 export type OwnedKey<C extends SuperhrefConfig> = {
   [K in keyof C & string]: C[K] extends AnyCodec
     ? K
-    : `${K}${KeySep}${keyof CodecsOf<C[K]> & string}`;
+    : Dotted<K, keyof CodecsOf<C[K]> & string>;
 }[keyof C & string];
