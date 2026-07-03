@@ -3,6 +3,12 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
+/**
+ * The bound object model: the shape `bind(url)` returns. Root values, one
+ * handle per section, actions with their leading parameters resolved, and
+ * the typed `patch`, `clear`, and `set` methods.
+ */
+
 import type { AnyCodec, Codecs, CodecValue } from "./codec.js";
 import type {
   ActionsOf,
@@ -14,16 +20,17 @@ import type {
 } from "./config.js";
 import type { Pretty, UnionToIntersection } from "./util.js";
 
-/** A map of named top-level actions, each `(patch, state, ...args) => string`. */
+/** A map of named top level actions, each `(patch, state, ...args) => string`. */
 export type ActionMap<P, S> = Record<
   string,
-  // biome-ignore lint/suspicious/noExplicitAny: variadic action args are intentionally open-ended
+  // biome-ignore lint/suspicious/noExplicitAny: variadic action args are intentionally unconstrained
   (patch: P, state: S, ...args: any[]) => string
 >;
 
 /**
- * Strip the leading `(patch, state)` params — what remains is the bound method.
- * @example `ResolvedAction<(patch, state, id: string) => string>` → `(id: string) => string`
+ * Strips the leading `patch` and `state` parameters; what remains is the
+ * bound method.
+ * @example `ResolvedAction<(patch, state, id: string) => string>` resolves to `(id: string) => string`.
  */
 export type ResolvedAction<F> = F extends (
   patch: infer _P,
@@ -77,8 +84,8 @@ export type PerSectionHandles<C extends SuperhrefConfig> = {
 };
 
 /**
- * The object `bind(url)` returns: the root values, a handle per section, the bound
- * top-level actions, and `patch`/`clear`/`set`.
+ * The object `bind(url)` returns: the root values, a handle per section, the
+ * bound top level actions, and `patch`/`clear`/`set`.
  */
 export type BoundSuperhref<
   C extends SuperhrefConfig,

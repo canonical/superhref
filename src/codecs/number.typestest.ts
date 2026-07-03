@@ -3,18 +3,19 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// NOTE: this exercises `numCodec` (introduced in the codecs PR, inherited here). If the
-// harness lands one PR lower, codec type-tests like this belong beside the codecs.
+// NOTE: this exercises `numCodec` (introduced in the codecs PR and inherited
+// here). If the harness lands one PR lower, codec type tests like this belong
+// beside the codecs.
 
 import type { Codec } from "../core/types/codec.js";
 import type { Equal, ExpectTrue } from "../type-testing/expect.js";
 import { numCodec } from "./number.js";
 
-// A provided `default` narrows the parsed value to `number`.
+// With a `default` the parsed value is always a `number`.
 const withDefault = numCodec({ default: 1 });
 type _withDefault = ExpectTrue<Equal<typeof withDefault, Codec<number>>>;
 
-// No `default` → the value can be absent.
+// Without a `default` the value can be absent.
 const noDefault = numCodec();
 type _noDefault = ExpectTrue<
   Equal<typeof noDefault, Codec<number | undefined>>

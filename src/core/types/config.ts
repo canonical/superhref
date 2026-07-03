@@ -3,18 +3,24 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
+/**
+ * The config shape and every type derived from it: what a config value may
+ * be, the shape `parse` returns, the payload `patch` accepts, and the full
+ * set of URL keys a config owns.
+ */
+
 import type { Dotted } from "../runtime/keys.js";
 import type { AnyCodec, Codecs, CodecValue, Parsed } from "./codec.js";
 import type { Section } from "./section.js";
 import type { Empty, Pretty } from "./util.js";
 
 /**
- * A config value is one of three shapes, told apart by structure:
- *  - a root `Codec` (has `parse`/`serialize`);
- *  - a bare codecs map (`{ id: codec, … }`) — a section with no actions;
- *  - `{ codecs, actions }` — a section with actions.
- * The action map here is `any` so that any concrete section is assignable to this type;
- * the precise types are read back from each value where they're needed.
+ * A config value is one of three shapes, told apart by structure: a root
+ * `Codec` with `parse` and `serialize`, a bare codecs map such as
+ * `{ id: codec }` for a section with no actions, or `{ codecs, actions }`
+ * for a section with actions. The action map here is `any` so that any
+ * concrete section is assignable to this type; the precise types are read
+ * back from each value where they are needed.
  */
 // biome-ignore lint/suspicious/noExplicitAny: keeps any concrete section assignable to SectionValue (see above)
 export type SectionValue = AnyCodec | Codecs | Section<Codecs, any>;
@@ -29,12 +35,16 @@ export type CodecsOf<V> = V extends { codecs: infer S extends Codecs }
   : V extends Codecs
     ? V
     : Empty;
+/**
+ * The action map of a config value: its `actions` field if it has one,
+ * otherwise `Empty`.
+ */
 export type ActionsOf<V> = V extends { actions: infer A } ? A : Empty;
 
 /**
  * The shape `parse` returns: one value per root key, one nested object per section, keyed
- * by the raw URL key. The `Pretty` wrappers are cosmetic — they make editors show the
- * expanded object rather than a type-alias name.
+ * by the raw URL key. The `Pretty` wrappers are cosmetic; they make editors
+ * show the expanded object rather than a type alias name.
  */
 export type SuperhrefParsed<C extends SuperhrefConfig> = Pretty<{
   [K in keyof C]: C[K] extends AnyCodec
@@ -42,7 +52,10 @@ export type SuperhrefParsed<C extends SuperhrefConfig> = Pretty<{
     : Pretty<Parsed<CodecsOf<C[K]>>>;
 }>;
 
-/** A section's patch payload: each codec key optional; `null` deletes it, `undefined`/absent = no change. */
+/**
+ * A section's patch payload: every codec key optional, where `null` deletes
+ * the key and `undefined` or absence leaves it unchanged.
+ */
 type SectionPatchInput<S extends Codecs> = Pretty<{
   [K in keyof S]?: CodecValue<S[K]> | null;
 }>;
@@ -57,6 +70,7 @@ export type SuperhrefPatchInput<C extends SuperhrefConfig> = Pretty<{
     : SectionPatchInput<CodecsOf<C[K]>> | null;
 }>;
 
+/** Applies a nested partial update and returns the new search string. */
 export type SuperhrefPatch<C extends SuperhrefConfig> = (
   partial: SuperhrefPatchInput<C>,
 ) => string;
@@ -64,7 +78,7 @@ export type SuperhrefPatch<C extends SuperhrefConfig> = (
 /**
  * Every full URL key the config owns: each root key, plus `section.codec` for every codec
  * in every section.
- * @example `{ panel: codec; bugs: { severity: codec } }` → `"panel" | "bugs.severity"`
+ * @example `{ panel: codec; bugs: { severity: codec } }` resolves to `"panel" | "bugs.severity"`.
  */
 export type OwnedKey<C extends SuperhrefConfig> = {
   [K in keyof C & string]: C[K] extends AnyCodec

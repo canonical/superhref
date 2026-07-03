@@ -4,9 +4,9 @@
  */
 
 /**
- * Minimal type-level assertion helpers, in the type-challenges style. A `*.typestest.ts`
- * file uses these to assert relationships between types; a wrong assertion is a compile
- * error, so `tsc` (via `pnpm typetest`) is the test runner.
+ * Minimal assertion helpers for type tests. A `*.typestest.ts` file uses
+ * these to assert relationships between types; a wrong assertion is a
+ * compile error, so `tsc` (via `pnpm typetest`) is the test runner.
  */
 
 /** Compiles only when `T` resolves to exactly `true`. */
@@ -16,10 +16,11 @@ export type ExpectTrue<T extends true> = T;
 export type ExpectFalse<T extends false> = T;
 
 /**
- * Strict, invariant type equality: distinguishes `any` / `unknown` / `never` and honours
- * readonly/optional modifiers (the classic deferred-conditional trick). It treats an
- * intersection like `A & {}` as distinct from `A`, so avoid it on `Pretty<>`-wrapped
- * shapes. Test those by assignability (`Extends`) or by usage instead.
+ * Strict, invariant type equality: distinguishes `any` / `unknown` / `never`
+ * and honours readonly and optional modifiers (the classic deferred
+ * conditional trick). It treats an intersection like `A & {}` as distinct
+ * from `A`, so avoid it on shapes wrapped in `Pretty<>`. Test those by
+ * assignability (`Extends`) or by usage instead.
  */
 export type Equal<X, Y> =
   (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2

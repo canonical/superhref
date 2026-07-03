@@ -10,7 +10,8 @@ import type {
 } from "../../type-testing/expect.js";
 import type { ResolvedAction, ResolvedActions } from "./bound.js";
 
-// `ResolvedAction` strips the leading (patch, state) and keeps the caller-facing args + return.
+// `ResolvedAction` strips the leading (patch, state) and keeps the caller's
+// args and return type.
 type OneArg = ResolvedAction<
   (patch: unknown, state: unknown, id: string) => string
 >;
@@ -23,14 +24,14 @@ type _keepsAllArgs = ExpectTrue<
   Equal<ManyArgs, (a: number, b: boolean) => void>
 >;
 
-// No trailing args → a zero-arg method.
+// With no trailing args the resolved method takes no parameters.
 type NoArgs = ResolvedAction<(patch: unknown, state: unknown) => string>;
 type _zeroArg = ExpectTrue<Equal<NoArgs, () => string>>;
 
 // Negative: a wrong arg type must not read as equal (guards against silently loosening to `any`).
 type _wrongArgCaught = ExpectFalse<Equal<OneArg, (id: number) => string>>;
 
-// A non-function resolves to `never`.
+// Anything that is not a function resolves to `never`.
 type _nonFunction = ExpectTrue<Equal<ResolvedAction<{ x: 1 }>, never>>;
 
 // `ResolvedActions` applies the strip across a whole action map.

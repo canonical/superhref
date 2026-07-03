@@ -18,15 +18,17 @@ type Config = {
   bugs: { severity: AnyCodec; page: AnyCodec };
 };
 
-// `OwnedKey` keeps root keys as-is and expands sections into dotted `section.codec` keys.
+// `OwnedKey` keeps root keys unchanged and expands sections into dotted
+// `section.codec` keys.
 type _ownedKeys = ExpectTrue<
   Equal<OwnedKey<Config>, "panel" | "bugs.severity" | "bugs.page">
 >;
 
-// Negative: the bare section name is NOT an owned key — only its dotted members are.
+// Negative: the bare section name is NOT an owned key; only its dotted
+// members are.
 type _noBareSection = ExpectFalse<Extends<"bugs", OwnedKey<Config>>>;
 
-// A root-only config yields just its root keys.
+// A config with only root keys yields exactly those keys.
 type _rootsOnly = ExpectTrue<
   Equal<OwnedKey<{ a: AnyCodec; b: AnyCodec }>, "a" | "b">
 >;

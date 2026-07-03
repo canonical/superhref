@@ -4,6 +4,12 @@
  */
 
 /**
+ * The codec contract and the types derived from it. `Codec` defines the
+ * encode and decode pair itself; the remaining types let other modules
+ * accept records of codecs and recover the value types they carry.
+ */
+
+/**
  * An encode and decode pair for a single search parameter key.
  *
  * A codec deals in plain, already decoded text. The engine reads and writes
@@ -44,15 +50,16 @@ export type AnyCodec = Codec<any>;
 export type Codecs = Record<string, AnyCodec>;
 
 /**
- * The value type a codec parses to: `Codec<T>` → `T` (`never` for a non-codec).
- * @example `CodecValue<Codec<string | undefined>>` → `string | undefined`
+ * The value type a codec parses to. `Codec<T>` resolves to `T`; anything
+ * that is not a codec resolves to `never`.
+ * @example `CodecValue<Codec<string | undefined>>` resolves to `string | undefined`.
  */
 export type CodecValue<X> = X extends Codec<infer T> ? T : never;
 
 /**
  * The parsed value type of a codec record.
  * @example `Parsed<{ page: Codec<number>; q: Codec<string | undefined> }>`
- *          → `{ page: number; q: string | undefined }`
+ *          resolves to `{ page: number; q: string | undefined }`.
  */
 export type Parsed<C extends Codecs> = {
   [K in keyof C]: CodecValue<C[K]>;

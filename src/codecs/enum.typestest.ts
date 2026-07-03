@@ -3,8 +3,8 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// NOTE: this exercises `enumCodec` (introduced in the codecs PR, inherited here —
-// see the placement note in number.typestest.ts).
+// NOTE: this exercises `enumCodec` (introduced in the codecs PR and inherited
+// here; see the placement note in number.typestest.ts).
 
 import type { Codec } from "../core/types/codec.js";
 import type {
@@ -19,7 +19,7 @@ import { enumCodec } from "./enum.js";
 const plain = enumCodec(["x", "y"]);
 type _plain = ExpectTrue<Equal<typeof plain, Codec<"x" | "y" | undefined>>>;
 
-// ...and a `default` narrows out `undefined`.
+// ...and a `default` removes `undefined` from the union.
 const withDefault = enumCodec(["x", "y"], { default: "x" });
 type _withDefault = ExpectTrue<Equal<typeof withDefault, Codec<"x" | "y">>>;
 

@@ -6,7 +6,8 @@
 import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import { innerKey, sectionPrefix, splitKey } from "./keys.js";
 
-// innerKey composes the precise dotted literal — the single source of truth OwnedKey reuses.
+// innerKey composes the precise dotted literal, the single definition that
+// OwnedKey reuses.
 const composed = innerKey("bugs", "page");
 type _innerKey = ExpectTrue<Equal<typeof composed, "bugs.page">>;
 
