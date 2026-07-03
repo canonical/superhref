@@ -40,7 +40,7 @@ describe("patch", () => {
     expect(url.search).toBe("?panel=bugs&bugs.severity=high");
   });
 
-  it("URL-encodes string values (via URLSearchParams: space → +)", () => {
+  it("encodes string values for the URL (via URLSearchParams: space becomes +)", () => {
     const url = app.patch(at(), { version: { id: "a b/c&d" } });
     expect(url.search).toBe("?version.id=a+b%2Fc%26d");
     expect(app.parse(url).version.id).toBe("a b/c&d");
@@ -62,11 +62,11 @@ describe("patch", () => {
   });
 
   it("ignores unknown patch keys at runtime (types reject them at compile time)", () => {
-    // @ts-expect-error — `typo` is not in the config (compile-time guard).
+    // @ts-expect-error `typo` is not in the config (a compile time guard).
     expect(app.patch(at("?panel=bugs"), { typo: 1 }).search).toBe(
       "?panel=bugs",
     );
-    // @ts-expect-error — `nope` is not a codec of `bugs` (compile-time guard).
+    // @ts-expect-error `nope` is not a codec of `bugs` (a compile time guard).
     expect(app.patch(at("?panel=bugs"), { bugs: { nope: 1 } }).search).toBe(
       "?panel=bugs",
     );

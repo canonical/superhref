@@ -3,7 +3,7 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// End-to-end inference through the factory: config in, precisely-typed
+// Inference through the whole factory: config in, precisely typed
 // parse/patch/bind out. The validators themselves are pinned next to their
 // types (validate/config.typestest.ts, validate/actions.typestest.ts,
 // validate/section.typestest.ts); this file pins the assembled API.
@@ -29,7 +29,7 @@ const sh = superhref(
     ),
   },
   {
-    // A top-level action's `patch` and `state` are typed from the config with
+    // A top level action's `patch` and `state` are typed from the config with
     // no annotation.
     actions: { reset: (patch) => patch({ panel: null, bugs: null }) },
   },
@@ -50,8 +50,9 @@ type _patchReturnsUrl = ExpectTrue<Equal<typeof patched, URL>>;
 type _clearReturnsUrl = ExpectTrue<
   Equal<ReturnType<(typeof sh)["clear"]>, URL>
 >;
-// A key the config doesn't own is rejected. That's an excess-property check,
-// which exists only at a literal call site — no `Extends` equivalent.
+// A key the config doesn't own is rejected. That's an excess property check,
+// which exists only at a literal call site, so there is no `Extends`
+// equivalent.
 // @ts-expect-error a key the config doesn't own is rejected
 sh.patch(url, { rogue: 1 });
 

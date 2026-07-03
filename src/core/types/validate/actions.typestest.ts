@@ -22,8 +22,8 @@ type _covered = ExpectTrue<
 >;
 
 // The actions option is checked against the action map AND the collision
-// constraint — an action named after a config key or an instance method can't
-// satisfy the error-string slot the constraint puts at that name.
+// constraint: an action named after a config key or an instance method can't
+// satisfy the error string slot the constraint puts at that name.
 type ActionsArg = ActionMap<unknown, unknown> & ActionNameCollisions<Cfg>;
 type _cleanActionOk = ExpectTrue<
   Extends<{ openBug: () => string }, ActionsArg>

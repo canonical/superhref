@@ -38,7 +38,7 @@ const app = superhref(
 
 const at = (search = ""): URL => new URL(`https://example.test/app${search}`);
 
-describe("bind — values", () => {
+describe("bind values", () => {
   it("hoists root values and section values under raw keys", () => {
     const queryParams = app.bind(at("?panel=bugs&bugs.severity=high"));
     expect(queryParams.panel).toBe("bugs");
@@ -47,7 +47,7 @@ describe("bind — values", () => {
   });
 });
 
-describe("bind — .set", () => {
+describe("bind .set", () => {
   it("root .set writes one root key", () => {
     const queryParams = app.bind(at());
     expect(queryParams.set("panel", "version")).toBe("?panel=version");
@@ -65,7 +65,7 @@ describe("bind — .set", () => {
     expect(queryParams.bugs.patch({ severity: "low" })).toBe(
       "?panel=bugs&bugs.severity=low",
     );
-    // `null` must type-check here — a section patch deletes with null.
+    // `null` must be accepted here; a section patch deletes with null.
     expect(queryParams.bugs.patch({ severity: null })).toBe("?panel=bugs");
   });
 
@@ -78,13 +78,13 @@ describe("bind — .set", () => {
   });
 });
 
-describe("bind — section actions", () => {
+describe("bind section actions", () => {
   it("a state-aware section action reads the bound state", () => {
-    // no severity yet → not "high" → sets "high"
+    // with no severity yet the value is not "high", so the toggle sets "high"
     expect(app.bind(at("?panel=bugs")).bugs.cycleSeverity()).toBe(
       "?panel=bugs&bugs.severity=high",
     );
-    // severity high → flips to low
+    // severity is high, so the toggle flips it to low
     expect(
       app.bind(at("?panel=bugs&bugs.severity=high")).bugs.cycleSeverity(),
     ).toBe("?panel=bugs&bugs.severity=low");
@@ -95,7 +95,7 @@ describe("bind — section actions", () => {
   });
 });
 
-describe("bind — cross-section actions", () => {
+describe("bind actions that span sections", () => {
   it("openVersion sets the panel and the version id in one href", () => {
     expect(app.bind(at()).openVersion("1.2.3")).toBe(
       "?panel=version&version.id=1.2.3",

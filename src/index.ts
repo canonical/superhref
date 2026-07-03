@@ -6,17 +6,19 @@
 /**
  * @canonical/superhref
  *
- * Typed, composable URL search-param state. The URL **is** the state: an instance
+ * Typed, composable URL search parameter state. The URL **is** the state:
+ * an instance
  * holds nothing and is a set of pure functions over a `URL` you pass in each time.
  *
  * A minimal engine: `parse`/`patch`/`clear`/`bind`, one typed `.set(key, value)` per
- * level, and section + top-level actions. `URLSearchParams` owns
- * percent-encoding, so codecs deal in plain values. A config value is one of three
+ * level, and section plus top level actions. `URLSearchParams` owns
+ * percent encoding, so codecs deal in plain values. A config value is one of three
  * shapes: `{ key: codec }` (root key), `{ key: { …codecs } }` (actionless section), or
  * `{ key: withActions({ …codecs }, { …actions }) }` (section with actions).
+ * @module superhref
  */
 
-// One-stop entry: codecs and patterns ride along.
+// The single entry point: codecs and patterns ride along.
 export * from "./codecs/index.js";
 export type {
   ActionMap,
