@@ -22,19 +22,19 @@ import type { Empty, Pretty } from "./util.js";
  * concrete section is assignable to this type; the precise types are read
  * back from each value where they are needed.
  */
-// biome-ignore lint/suspicious/noExplicitAny: keeps any concrete section assignable to SectionValue (see above)
-export type SectionValue = AnyCodec | Codecs | Section<Codecs, any>;
-export type SuperhrefConfig = Record<string, SectionValue>;
+// biome-ignore lint/suspicious/noExplicitAny: keeps any concrete section assignable to ConfigValue (see above)
+export type ConfigValue = AnyCodec | Codecs | Section<Codecs, any>;
+export type SuperhrefConfig = Record<string, ConfigValue>;
 
 /**
  * The codecs of a config value: its `codecs` field if it has one, otherwise the value
- * itself (a bare codecs map), otherwise `Empty` for a root codec (which has neither).
+ * itself (a bare codecs map), otherwise `never` for a root codec (which has neither).
  */
 export type CodecsOf<V> = V extends { codecs: infer S extends Codecs }
   ? S
   : V extends Codecs
     ? V
-    : Empty;
+    : never;
 /**
  * The action map of a config value: its `actions` field if it has one,
  * otherwise `Empty`.

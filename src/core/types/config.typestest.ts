@@ -9,8 +9,9 @@ import type {
   ExpectTrue,
   Extends,
 } from "../../type-testing/expect.js";
-import type { AnyCodec } from "./codec.js";
-import type { OwnedKey } from "./config.js";
+import type { AnyCodec, Codec } from "./codec.js";
+import type { ActionsOf, CodecsOf, ConfigValue, OwnedKey } from "./config.js";
+import type { Empty } from "./util.js";
 
 // A config: one root key, one section with two codecs.
 type Config = {
@@ -31,4 +32,47 @@ type _noBareSection = ExpectFalse<Extends<"bugs", OwnedKey<Config>>>;
 // A config with only root keys yields exactly those keys.
 type _rootsOnly = ExpectTrue<
   Equal<OwnedKey<{ a: AnyCodec; b: AnyCodec }>, "a" | "b">
+>;
+
+type Str = Codec<string>;
+type Num = Codec<number>;
+type WithActions = { codecs: { page: Num }; actions: { go: () => string } };
+
+// A section with actions yields its codecs map.
+type _codecsOfSectionWithActions = ExpectTrue<
+  Equal<CodecsOf<WithActions>, { page: Num }>
+>;
+// A bare section is its own codecs map.
+type _codecsOfBareSection = ExpectTrue<
+  Equal<CodecsOf<{ id: Str }>, { id: Str }>
+>;
+// A root codec has no codecs map, so the fallback is `never`.
+type _codecsOfRootCodecIsNever = ExpectTrue<Equal<CodecsOf<Str>, never>>;
+
+// A section with actions yields its action map.
+type _actionsOfSectionWithActions = ExpectTrue<
+  Equal<ActionsOf<WithActions>, { go: () => string }>
+>;
+// Having no actions is a real state for a bare section, so the fallback is `Empty`.
+type _actionsOfBareSectionIsEmpty = ExpectTrue<
+  Equal<ActionsOf<{ id: Str }>, Empty>
+>;
+// A `never` fallback would collapse every bare section handle to `never`.
+type _actionsOfBareSectionIsNotNever = ExpectFalse<
+  Equal<ActionsOf<{ id: Str }>, never>
+>;
+
+// A root codec is a valid config value.
+type _rootCodecIsConfigValue = ExpectTrue<Extends<Str, ConfigValue>>;
+// A bare codecs map is a valid config value.
+type _bareSectionIsConfigValue = ExpectTrue<Extends<{ id: Str }, ConfigValue>>;
+// A section with actions is a valid config value.
+type _sectionWithActionsIsConfigValue = ExpectTrue<
+  Extends<WithActions, ConfigValue>
+>;
+// A plain value is not a config value.
+type _plainValueIsNotConfigValue = ExpectFalse<Extends<5, ConfigValue>>;
+// An object whose properties are not codecs is not a config value.
+type _looseObjectIsNotConfigValue = ExpectFalse<
+  Extends<{ id: number }, ConfigValue>
 >;
