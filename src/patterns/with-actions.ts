@@ -35,10 +35,12 @@ import type {
  *     },
  *   ); // bound: setRange(from: Date, to: Date), clearRange()
  */
-export const withActions = <
+export function withActions<
   S extends Codecs,
   A extends SectionActionMap<Parsed<S>>,
 >(
   codecs: S & ValidateCodecs<S>,
   actions: A & SectionActionMap<Parsed<S>> & SectionActionCollisions<S>,
-): Section<S, A> => ({ codecs, actions });
+): Section<S, A> {
+  return { codecs, actions };
+}
