@@ -3,9 +3,6 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// NOTE: this exercises `strCodec` (introduced in the codecs PR and inherited
-// here; see the placement note in number.typestest.ts).
-
 import type { Codec } from "../core/types/codec.js";
 import type {
   Equal,
@@ -25,9 +22,6 @@ type _noDefault = ExpectTrue<
   Equal<typeof noDefault, Codec<string | undefined>>
 >;
 
-// `serialize` takes the codec's value type: absence is `undefined` and never
-// `null`, because `null` is patch syntax for deletion rather than a codec
-// value.
 type SerializeArg = Parameters<(typeof noDefault)["serialize"]>[0];
 type _absenceOk = ExpectTrue<Extends<undefined, SerializeArg>>;
 type _nullRejected = ExpectFalse<Extends<null, SerializeArg>>;

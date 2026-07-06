@@ -3,9 +3,6 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// NOTE: this exercises `enumCodec` (introduced in the codecs PR and inherited
-// here; see the placement note in number.typestest.ts).
-
 import type { Codec } from "../core/types/codec.js";
 import type {
   Equal,
@@ -23,7 +20,6 @@ type _plain = ExpectTrue<Equal<typeof plain, Codec<"x" | "y" | undefined>>>;
 const withDefault = enumCodec(["x", "y"], { default: "x" });
 type _withDefault = ExpectTrue<Equal<typeof withDefault, Codec<"x" | "y">>>;
 
-// `serialize` accepts only members of the set.
 type SerializeArg = Parameters<(typeof plain)["serialize"]>[0];
 type _memberOk = ExpectTrue<Extends<"x", SerializeArg>>;
 type _outsiderRejected = ExpectFalse<Extends<"z", SerializeArg>>;

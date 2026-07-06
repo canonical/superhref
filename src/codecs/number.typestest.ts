@@ -3,10 +3,6 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// NOTE: this exercises `numCodec` (introduced in the codecs PR and inherited
-// here). If the harness lands one PR lower, codec type tests like this belong
-// beside the codecs.
-
 import type { Codec } from "../core/types/codec.js";
 import type { Equal, ExpectTrue } from "../type-testing/expect.js";
 import { numCodec } from "./number.js";

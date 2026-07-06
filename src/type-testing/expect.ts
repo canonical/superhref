@@ -3,6 +3,8 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
+// Source: https://github.com/type-challenges/type-challenges/blob/0b0b0b18bcb7ac42dc22ce26ffb438231d4754b1/utils/index.d.ts
+
 /**
  * Minimal assertion helpers for type tests. A `*.typestest.ts` file uses
  * these to assert relationships between types; a wrong assertion is a
