@@ -20,7 +20,6 @@ describe("strCodec", () => {
     });
 
     it("an explicit empty value parses to '' rather than the default", () => {
-      // `?key=` means present and empty; only true absence (null) falls back to the default.
       expect(strCodec().parse("")).toBe("");
       expect(strCodec({ default: "x" }).parse("")).toBe("");
     });

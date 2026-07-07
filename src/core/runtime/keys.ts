@@ -31,10 +31,12 @@ export type Dotted<
  * @param codec The codec key inside the section.
  * @returns The dotted key, typed precisely for literal inputs.
  */
-export const innerKey = <Section extends string, Codec extends string>(
+export function innerKey<Section extends string, Codec extends string>(
   section: Section,
   codec: Codec,
-): Dotted<Section, Codec> => `${section}${KEY_SEP}${codec}`;
+): Dotted<Section, Codec> {
+  return `${section}${KEY_SEP}${codec}`;
+}
 
 /**
  * Splits a full key into its section and codec parts. The result is precise
@@ -45,13 +47,12 @@ export const innerKey = <Section extends string, Codec extends string>(
  * @returns A labelled `[section, codec]` tuple, or `null` for a root key
  * that contains no separator.
  */
+export function splitKey<Section extends string, Codec extends string>(
+  fullKey: `${Section}${KeySep}${Codec}`,
+): [section: Section, codec: Codec];
 export function splitKey<T extends string>(
   fullKey: T,
-): string extends T
-  ? [section: string, codec: string] | null
-  : T extends `${infer Section}${KeySep}${infer Codec}`
-    ? [section: Section, codec: Codec]
-    : null;
+): string extends T ? [section: string, codec: string] | null : null;
 export function splitKey(
   fullKey: string,
 ): [section: string, codec: string] | null {

@@ -18,11 +18,12 @@ describe("numCodec", () => {
     it("keeps 0, a real value rather than a missing one", () => {
       expect(numCodec().parse("0")).toBe(0);
     });
+    
 
     it("treats both absence and empty string as missing, so both yield the default", () => {
-      // `Number("")` is 0, a classic trap with URLs edited by hand, so "" must mean missing.
       expect(numCodec({ default: 1 }).parse(null)).toBe(1);
       expect(numCodec({ default: 1 }).parse("")).toBe(1);
+      expect(numCodec().parse(null)).toBeUndefined();
       expect(numCodec().parse("")).toBeUndefined();
     });
 
