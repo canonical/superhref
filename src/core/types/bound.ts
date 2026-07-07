@@ -13,19 +13,17 @@ import type { AnyCodec, Codecs, CodecValue } from "./codec.js";
 import type {
   ActionsOf,
   CodecsOf,
+  ConfigValue,
   SuperhrefConfig,
   SuperhrefParsed,
   SuperhrefPatch,
   SuperhrefPatchInput,
 } from "./config.js";
+import type { Action } from "./section.js";
 import type { Pretty, UnionToIntersection } from "./util.js";
 
 /** A map of named top level actions, each `(patch, state, ...args) => string`. */
-export type ActionMap<P, S> = Record<
-  string,
-  // biome-ignore lint/suspicious/noExplicitAny: variadic action args are intentionally unconstrained
-  (patch: P, state: S, ...args: any[]) => string
->;
+export type ActionMap<P, S> = Record<string, Action<P, S>>;
 
 /**
  * Strips the leading `patch` and `state` parameters; what remains is the
@@ -48,7 +46,7 @@ type Values<S extends Codecs> = { [K in keyof S]: CodecValue<S[K]> };
  * A section handle: its parsed values (under their raw keys), its bound actions, and a
  * `patch`/`set` pair.
  */
-export type SectionHandle<V> = Pretty<
+export type SectionHandle<V extends ConfigValue> = Pretty<
   Values<CodecsOf<V>> &
     ResolvedActions<ActionsOf<V>> & {
       patch: (
@@ -59,11 +57,11 @@ export type SectionHandle<V> = Pretty<
       // One call signature per codec key, pairing each key with its own value type.
       set: UnionToIntersection<
         {
-          [K in keyof CodecsOf<V> & string]: (
+          [K in keyof CodecsOf<V>]: (
             key: K,
             value: CodecValue<CodecsOf<V>[K]> | null,
           ) => string;
-        }[keyof CodecsOf<V> & string]
+        }[keyof CodecsOf<V>]
       >;
     }
 >;
@@ -98,11 +96,11 @@ export type BoundSuperhref<
       clear: () => string;
       set: UnionToIntersection<
         {
-          [K in RootKeys<C> & string]: (
+          [K in RootKeys<C>]: (
             key: K,
             value: CodecValue<C[K]> | null,
           ) => string;
-        }[RootKeys<C> & string]
+        }[RootKeys<C>]
       >;
     }
 >;

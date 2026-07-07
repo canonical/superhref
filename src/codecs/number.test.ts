@@ -18,7 +18,6 @@ describe("numCodec", () => {
     it("keeps 0, a real value rather than a missing one", () => {
       expect(numCodec().parse("0")).toBe(0);
     });
-    
 
     it("treats both absence and empty string as missing, so both yield the default", () => {
       expect(numCodec({ default: 1 }).parse(null)).toBe(1);
