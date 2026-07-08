@@ -22,15 +22,15 @@ describe("parse", () => {
   it("reads nested state, raw keys, with defaults", () => {
     expect(app.parse(at("?panel=bugs&bugs.severity=high"))).toEqual({
       panel: "bugs",
-      version: { id: undefined },
-      bugs: { severity: "high", status: undefined },
+      version: { id: null },
+      bugs: { severity: "high", status: null },
     });
   });
 
   it("coerces hostile values instead of throwing", () => {
     const state = app.parse(at("?panel=nonsense&bugs.severity=BOGUS"));
-    expect(state.panel).toBeUndefined();
-    expect(state.bugs.severity).toBeUndefined();
+    expect(state.panel).toBeNull();
+    expect(state.bugs.severity).toBeNull();
   });
 });
 

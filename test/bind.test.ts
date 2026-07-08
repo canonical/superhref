@@ -43,7 +43,7 @@ describe("bind values", () => {
     const queryParams = app.bind(at("?panel=bugs&bugs.severity=high"));
     expect(queryParams.panel).toBe("bugs");
     expect(queryParams.bugs.severity).toBe("high");
-    expect(queryParams.version.id).toBeUndefined();
+    expect(queryParams.version.id).toBeNull();
   });
 });
 

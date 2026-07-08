@@ -10,6 +10,7 @@
  */
 
 import type { AnyCodec } from "../codec.js";
+import type { SuperhrefConfig } from "../config.js";
 import type { ValidKey } from "../key.js";
 import type { SectionHasProblem, SectionMsg } from "./section.js";
 
@@ -30,7 +31,7 @@ export type ReservedRoot = "patch" | "clear" | "set";
  * so the config's other keys still infer their precise types.
  * @example `superhref({ set: enumCodec(P) })` errors at `set`, a reserved key.
  */
-export type ValidateConfigKeys<C> = {
+export type ValidateConfigKeys<C extends SuperhrefConfig> = {
   [K in keyof C]: ValidKey<K & string> extends true
     ? K extends ReservedRoot
       ? `superhref: config key "${K & string}" is reserved (it would shadow the bound .${K & string})`
