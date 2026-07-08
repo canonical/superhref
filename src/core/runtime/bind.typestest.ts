@@ -3,21 +3,16 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// `BoundSuperhref` and `SectionHandle` are intersections wrapped in `Pretty`
-// and `set` is an overload set, so the bound object is asserted by usage
-// (leaf types, key sets, and accepted or rejected calls) rather than by an
-// `Equal` over the whole shape.
+// The bound object's shape is pinned in `core/types/bound.typestest.ts`; this
+// file pins that `bind` infers that shape from a runtime config value, so it
+// is asserted by usage (leaf types and key sets) rather than by an `Equal`
+// over the whole shape.
 
 import { enumCodec } from "../../codecs/enum.js";
 import { numCodec } from "../../codecs/number.js";
 import { strCodec } from "../../codecs/string.js";
 import { withActions } from "../../patterns/with-actions.js";
-import type {
-  Equal,
-  ExpectFalse,
-  ExpectTrue,
-  Extends,
-} from "../../type-testing/expect.js";
+import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import type { SuperhrefParsed, SuperhrefPatch } from "../types/config.js";
 import { bind } from "./bind.js";
 
@@ -75,44 +70,3 @@ type _sectionAction = ExpectTrue<
 type _topAction = ExpectTrue<
   Equal<typeof bound.reset, (hard: boolean) => string>
 >;
-type _clear = ExpectTrue<Equal<typeof bound.clear, () => string>>;
-
-// `patch` takes a nested partial and returns the new search string.
-const patched = bound.patch({ q: "crash", bugs: { page: 2 } });
-type _patchResult = ExpectTrue<Equal<typeof patched, string>>;
-// A key the config doesn't own is rejected. That's an excess property check,
-// which exists only at a literal call site, so there is no `Extends`
-// equivalent.
-// @ts-expect-error a key the config doesn't own is rejected
-bound.patch({ bogus: 1 });
-
-// `set` pairs each key with its own value type, `null` included...
-bound.set("panel", "open");
-bound.set("q", null);
-bound.bugs.set("page", 2);
-bound.bugs.set("severity", "high");
-// ...and no signature in the overload set accepts a wrong pairing: a mismatched
-// value, a mixed key/value pair, or a key that isn't a root/section codec key.
-type RootSet = typeof bound.set;
-type SectionSet = typeof bound.bugs.set;
-type _wrongRootValue = ExpectFalse<
-  Extends<RootSet, (key: "panel", value: 3) => string>
->;
-type _sectionKeyAtRoot = ExpectFalse<
-  Extends<RootSet, (key: "bugs", value: never) => string>
->;
-type _wrongSectionValue = ExpectFalse<
-  Extends<SectionSet, (key: "page", value: "two") => string>
->;
-type _mixedPair = ExpectFalse<
-  Extends<SectionSet, (key: "severity", value: 2) => string>
->;
-type _unknownSectionKey = ExpectFalse<
-  Extends<SectionSet, (key: "nope", value: never) => string>
->;
-
-// A section handle patches only its own keys (an excess property check
-// again).
-bound.bugs.patch({ page: null, severity: "low" });
-// @ts-expect-error a key outside the section is rejected
-bound.bugs.patch({ q: "x" });
