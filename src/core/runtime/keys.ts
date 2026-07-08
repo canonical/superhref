@@ -39,17 +39,24 @@ export function innerKey<Section extends string, Codec extends string>(
 }
 
 /**
- * Splits a full key into its section and codec parts. The result is precise
- * for literal keys, while a dynamic `string` widens to
- * `[string, string] | null`.
+ * Splits a full key into its section and codec parts. A literal key that
+ * contains the separator resolves to a precise `[section, codec]` tuple.
  *
- * @param fullKey The key as it appears in the URL.
- * @returns A labelled `[section, codec]` tuple, or `null` for a root key
- * that contains no separator.
+ * @param fullKey The dotted key as it appears in the URL.
+ * @returns A `[section, codec]` tuple with each part typed precisely.
  */
 export function splitKey<Section extends string, Codec extends string>(
   fullKey: `${Section}${KeySep}${Codec}`,
 ): [section: Section, codec: Codec];
+/**
+ * Splits a full key into its section and codec parts. A dynamic `string`
+ * widens to `[string, string] | null`, while a literal key with no separator
+ * narrows to `null`.
+ *
+ * @param fullKey The key as it appears in the URL.
+ * @returns A `[section, codec]` tuple for a key that contains the
+ * separator, or `null` for a root key that does not.
+ */
 export function splitKey<T extends string>(
   fullKey: T,
 ): string extends T ? [section: string, codec: string] | null : null;
