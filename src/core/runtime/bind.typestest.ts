@@ -55,12 +55,12 @@ type _handleKeys = ExpectTrue<
 
 // Root values keep their codec value types.
 type _root = ExpectTrue<Equal<typeof bound.panel, "open" | "closed">>;
-type _optionalRoot = ExpectTrue<Equal<typeof bound.q, string | undefined>>;
+type _optionalRoot = ExpectTrue<Equal<typeof bound.q, string | null>>;
 
 // Section values are read straight off the handle, typed per codec.
 type _handleValue = ExpectTrue<Equal<typeof bound.bugs.page, number>>;
 type _bareHandleValue = ExpectTrue<
-  Equal<typeof bound.filters.tag, string | undefined>
+  Equal<typeof bound.filters.tag, string | null>
 >;
 
 // Bound actions lose their (patch, state) prefix and keep the caller args.

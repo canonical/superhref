@@ -70,11 +70,11 @@ describe("bind hoisted values", () => {
     expect(queryParams.bugs.page).toBe(3);
   });
 
-  it("absent values read as undefined; section codec defaults apply", () => {
+  it("absent values read as null; section codec defaults apply", () => {
     const queryParams = bindAt("");
-    expect(queryParams.panel).toBeUndefined();
-    expect(queryParams.version.id).toBeUndefined();
-    expect(queryParams.bugs.severity).toBeUndefined();
+    expect(queryParams.panel).toBeNull();
+    expect(queryParams.version.id).toBeNull();
+    expect(queryParams.bugs.severity).toBeNull();
     expect(queryParams.bugs.page).toBe(1); // numCodec default
   });
 });
