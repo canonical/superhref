@@ -14,8 +14,8 @@ describe("strCodec", () => {
       expect(strCodec().parse("a b/c&d")).toBe("a b/c&d");
     });
 
-    it("absence (null) yields the default, or undefined when there is none", () => {
-      expect(strCodec().parse(null)).toBeUndefined();
+    it("absence (null) yields the default, or null when there is none", () => {
+      expect(strCodec().parse(null)).toBeNull();
       expect(strCodec({ default: "x" }).parse(null)).toBe("x");
     });
 
@@ -31,8 +31,8 @@ describe("strCodec", () => {
       expect(strCodec().serialize("a b/c&d")).toBe("a b/c&d");
     });
 
-    it("undefined serializes to null (omit the key)", () => {
-      expect(strCodec().serialize(undefined)).toBeNull();
+    it("null (the absent value) serializes to null (omit the key)", () => {
+      expect(strCodec().serialize(null)).toBeNull();
     });
 
     it("intentionally serializes the empty string verbatim, with no special treatment", () => {

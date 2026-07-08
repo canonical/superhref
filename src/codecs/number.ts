@@ -41,30 +41,30 @@ export function numCodec(
 ): Codec<number>;
 /**
  * A number codec that coerces instead of throwing. Without a `default`,
- * absent or invalid input parses to `undefined`.
+ * absent or invalid input parses to `null`.
  *
  * @param opts Coercion options.
- * @returns A codec whose parsed value is a `number` or `undefined`.
+ * @returns A codec whose parsed value is a `number` or `null`.
  */
 export function numCodec(
   opts?: NumberBounds & { default?: number },
-): Codec<number | undefined>;
+): Codec<number | null>;
 export function numCodec(
   opts?: NumberBounds & { default?: number },
-): Codec<number> | Codec<number | undefined> {
+): Codec<number> | Codec<number | null> {
   return {
     parse: (raw) => {
-      if (raw === null || raw === "") return opts?.default;
+      if (raw === null || raw === "") return opts?.default ?? null;
 
       const n = Number(raw);
-      if (!Number.isFinite(n)) return opts?.default;
+      if (!Number.isFinite(n)) return opts?.default ?? null;
 
-      if (opts?.integer && !Number.isInteger(n)) return opts?.default;
+      if (opts?.integer && !Number.isInteger(n)) return opts?.default ?? null;
       if (opts?.min !== undefined && n < opts.min) return opts.min;
       if (opts?.max !== undefined && n > opts.max) return opts.max;
       return n;
     },
-    serialize: (v) => (v === undefined ? null : String(v)),
+    serialize: (v) => (v === null ? null : String(v)),
     default: opts?.default,
-  } satisfies Codec<number | undefined>;
+  } satisfies Codec<number | null>;
 }

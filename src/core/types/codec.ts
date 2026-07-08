@@ -17,7 +17,7 @@
  * percent encoding on write, so `parse` receives a readable string and
  * `serialize` returns one.
  */
-export type Codec<T> = {
+export type Codec<T extends NonNullable<unknown> | null> = {
   /**
    * Turns the raw URL value into a typed value. Receives `null` when the key
    * is absent from the URL. It must never throw, even on hostile input such
@@ -27,14 +27,15 @@ export type Codec<T> = {
   parse: (raw: string | null) => T;
   /**
    * Turns a typed value back into URL text. Returning `null` represents the
-   * value by leaving the key out of the URL entirely. A codec must never map
+   * value by leaving the key out of the URL entirely, and a `null` value (the
+   * absent value) always serializes back to `null`. A codec must never map
    * two distinct representable values to absence, because they would become
    * indistinguishable when the URL is parsed again.
    */
-  serialize: (value: T) => string | null;
+  serialize: (value: T | null) => string | null;
   /**
    * The value that absent or invalid input resolves to.
-   * @defaultValue `undefined`, so an absent key parses to `undefined`.
+   * @defaultValue `undefined`, an absent key parses to `null`.
    */
   default?: T;
 };
@@ -52,14 +53,14 @@ export type Codecs = Record<string, AnyCodec>;
 /**
  * The value type a codec parses to. `Codec<T>` resolves to `T`; anything
  * that is not a codec resolves to `never`.
- * @example `CodecValue<Codec<string | undefined>>` resolves to `string | undefined`.
+ * @example `CodecValue<Codec<string | null>>` resolves to `string | null`.
  */
 export type CodecValue<X> = X extends Codec<infer T> ? T : never;
 
 /**
  * The parsed value type of a codec record.
- * @example `Parsed<{ page: Codec<number>; q: Codec<string | undefined> }>`
- *          resolves to `{ page: number; q: string | undefined }`.
+ * @example `Parsed<{ page: Codec<number>; q: Codec<string | null> }>`
+ *          resolves to `{ page: number; q: string | null }`.
  */
 export type Parsed<C extends Codecs> = {
   [K in keyof C]: CodecValue<C[K]>;

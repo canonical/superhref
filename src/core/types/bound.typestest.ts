@@ -51,12 +51,12 @@ type _mapsEach = ExpectTrue<
   Equal<Mapped, { open: (id: string) => string; close: () => string }>
 >;
 
-type BugsState = { page: number; severity: string | undefined };
+type BugsState = { page: number; severity: string | null };
 type Cfg = {
   panel: Codec<"open" | "closed">;
-  q: Codec<string | undefined>;
+  q: Codec<string | null>;
   bugs: {
-    codecs: { page: Codec<number>; severity: Codec<string | undefined> };
+    codecs: { page: Codec<number>; severity: Codec<string | null> };
     actions: {
       jump: (
         patch: SectionPatch<BugsState>,
@@ -65,7 +65,7 @@ type Cfg = {
       ) => string;
     };
   };
-  filters: { tag: Codec<string | undefined> };
+  filters: { tag: Codec<string | null> };
 };
 type Actions = {
   reset: (
@@ -93,14 +93,12 @@ type _sectionKeys = ExpectTrue<
 
 // Root values keep their codec value types.
 type _rootKey = ExpectTrue<Equal<typeof queryParams.panel, "open" | "closed">>;
-type _optionalRootKey = ExpectTrue<
-  Equal<typeof queryParams.q, string | undefined>
->;
+type _optionalRootKey = ExpectTrue<Equal<typeof queryParams.q, string | null>>;
 
 // Section values are read straight off the handle, typed per codec.
 type _sectionValue = ExpectTrue<Equal<typeof queryParams.bugs.page, number>>;
 type _secondSectionValue = ExpectTrue<
-  Equal<typeof queryParams.filters.tag, string | undefined>
+  Equal<typeof queryParams.filters.tag, string | null>
 >;
 
 // Bound actions only expect args to be provided.
@@ -131,6 +129,21 @@ queryParams.bugs.patch({ q: "x" });
 
 type RootSet = typeof queryParams.set;
 type SectionSet = typeof queryParams.bugs.set;
+type _rootSetShape1 = ExpectTrue<
+  Extends<RootSet, (key: "panel", value: "open" | "closed" | null) => string>
+>;
+type _rootSetShape2 = ExpectTrue<
+  Extends<RootSet, (key: "q", value: string | null) => string>
+>;
+type _sectionSetShape1 = ExpectTrue<
+  Extends<SectionSet, (key: "page", value: number | null) => string>
+>;
+type _sectionSetShape2 = ExpectTrue<
+  Extends<SectionSet, (key: "severity", value: string | null) => string>
+>;
+type _undefinedValueRejected = ExpectFalse<
+  Extends<RootSet, (key: "q", value: undefined) => string>
+>;
 type _wrongRootValue = ExpectFalse<
   Extends<RootSet, (key: "panel", value: 3) => string>
 >;

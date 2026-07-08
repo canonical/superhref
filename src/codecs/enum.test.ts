@@ -15,20 +15,20 @@ describe("enumCodec", () => {
       expect(enumCodec(STATUS).parse("high")).toBe("high");
     });
 
-    it("coerces a value outside the set to the default (or undefined)", () => {
-      expect(enumCodec(STATUS).parse("nope")).toBeUndefined();
+    it("coerces a value outside the set to the default (or null)", () => {
+      expect(enumCodec(STATUS).parse("nope")).toBeNull();
       expect(enumCodec(STATUS, { default: "low" }).parse("nope")).toBe("low");
     });
 
-    it("absence (null) yields the default (or undefined)", () => {
-      expect(enumCodec(STATUS).parse(null)).toBeUndefined();
+    it("absence (null) yields the default (or null)", () => {
+      expect(enumCodec(STATUS).parse(null)).toBeNull();
       expect(enumCodec(STATUS, { default: "low" }).parse(null)).toBe("low");
     });
 
     it("membership is exact and respects letter case", () => {
-      expect(enumCodec(STATUS).parse("HIGH")).toBeUndefined(); // wrong case
-      expect(enumCodec(STATUS).parse("hig")).toBeUndefined(); // substring, not a member
-      expect(enumCodec(STATUS).parse("")).toBeUndefined(); // empty, not a member
+      expect(enumCodec(STATUS).parse("HIGH")).toBeNull(); // wrong case
+      expect(enumCodec(STATUS).parse("hig")).toBeNull(); // substring, not a member
+      expect(enumCodec(STATUS).parse("")).toBeNull(); // empty, not a member
     });
 
     it("matches a member containing spaces (URL layer should have already decoded it)", () => {
@@ -45,8 +45,8 @@ describe("enumCodec", () => {
       );
     });
 
-    it("undefined serializes to null (omit the key)", () => {
-      expect(enumCodec(STATUS).serialize(undefined)).toBeNull();
+    it("null (the absent value) serializes to null (omit the key)", () => {
+      expect(enumCodec(STATUS).serialize(null)).toBeNull();
     });
   });
 

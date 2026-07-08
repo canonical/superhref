@@ -20,20 +20,18 @@ import type { Codec } from "../core/types/codec.js";
 export function strCodec(opts: { default: string }): Codec<string>;
 /**
  * A plain string codec. Without a `default`, an absent key parses to
- * `undefined`; only `undefined` leaves the key out of the URL.
+ * `null`; only `null` leaves the key out of the URL.
  *
  * @param opts Options.
- * @returns A codec whose parsed value is a `string` or `undefined`.
+ * @returns A codec whose parsed value is a `string` or `null`.
  */
+export function strCodec(opts?: { default?: string }): Codec<string | null>;
 export function strCodec(opts?: {
   default?: string;
-}): Codec<string | undefined>;
-export function strCodec(opts?: {
-  default?: string;
-}): Codec<string> | Codec<string | undefined> {
+}): Codec<string> | Codec<string | null> {
   return {
-    parse: (raw) => (raw === null ? opts?.default : raw),
-    serialize: (v) => (v === undefined ? null : v),
+    parse: (raw) => (raw === null ? (opts?.default ?? null) : raw),
+    serialize: (v) => v,
     default: opts?.default,
-  } satisfies Codec<string | undefined>;
+  } satisfies Codec<string | null>;
 }

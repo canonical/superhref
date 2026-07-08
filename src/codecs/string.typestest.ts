@@ -11,8 +11,6 @@ import { strCodec } from "./string.js";
 const withDefault = strCodec({ default: "all" });
 type _withDefault = ExpectTrue<Equal<typeof withDefault, Codec<string>>>;
 
-// Without a `default` the value can be absent.
+// Without a `default` the value can be null.
 const noDefault = strCodec();
-type _noDefault = ExpectTrue<
-  Equal<typeof noDefault, Codec<string | undefined>>
->;
+type _noDefault = ExpectTrue<Equal<typeof noDefault, Codec<string | null>>>;

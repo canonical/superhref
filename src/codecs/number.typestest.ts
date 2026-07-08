@@ -13,12 +13,8 @@ type _withDefault = ExpectTrue<Equal<typeof withDefault, Codec<number>>>;
 
 // Without a `default` the value can be absent.
 const noDefault = numCodec();
-type _noDefault = ExpectTrue<
-  Equal<typeof noDefault, Codec<number | undefined>>
->;
+type _noDefault = ExpectTrue<Equal<typeof noDefault, Codec<number | null>>>;
 
 // Bounds alone don't add a default, so the value stays optional.
 const boundsOnly = numCodec({ min: 0, max: 10 });
-type _boundsOnly = ExpectTrue<
-  Equal<typeof boundsOnly, Codec<number | undefined>>
->;
+type _boundsOnly = ExpectTrue<Equal<typeof boundsOnly, Codec<number | null>>>;

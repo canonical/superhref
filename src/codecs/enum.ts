@@ -25,26 +25,28 @@ export function enumCodec<const T extends readonly string[]>(
 ): Codec<T[number]>;
 /**
  * A codec for one of a fixed set of string literals. Without a `default`,
- * input outside `values` and absent keys parse to `undefined`, so
- * `enumCodec(["a", "b"])` produces `Codec<"a" | "b" | undefined>`.
+ * input outside `values` and absent keys parse to `null`, so
+ * `enumCodec(["a", "b"])` produces `Codec<"a" | "b" | null>`.
  *
  * @typeParam T The accepted literals, inferred from `values`.
  * @param values The accepted string literals.
  * @param opts Options.
- * @returns A codec whose parsed value is one of `values` or `undefined`.
+ * @returns A codec whose parsed value is one of `values` or `null`.
  */
 export function enumCodec<const T extends readonly string[]>(
   values: T,
   opts?: { default?: T[number] },
-): Codec<T[number] | undefined>;
+): Codec<T[number] | null>;
 export function enumCodec<const T extends readonly string[]>(
   values: T,
   opts?: { default?: T[number] },
-): Codec<T[number]> | Codec<T[number] | undefined> {
+): Codec<T[number]> | Codec<T[number] | null> {
   return {
     parse: (raw) =>
-      raw !== null && values.includes(raw) ? (raw as T[number]) : opts?.default,
-    serialize: (v) => (v === undefined ? null : v),
+      raw !== null && values.includes(raw)
+        ? (raw as T[number])
+        : (opts?.default ?? null),
+    serialize: (v) => v,
     default: opts?.default,
-  } satisfies Codec<T[number] | undefined>;
+  } satisfies Codec<T[number] | null>;
 }
