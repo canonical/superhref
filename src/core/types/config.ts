@@ -30,7 +30,9 @@ export type SuperhrefConfig = Record<string, ConfigValue>;
  * The codecs of a config value: its `codecs` field if it has one, otherwise the value
  * itself (a bare codecs map), otherwise `never` for a root codec (which has neither).
  */
-export type CodecsOf<V extends ConfigValue> = V extends { codecs: infer S extends Codecs }
+export type CodecsOf<V extends ConfigValue> = V extends {
+  codecs: infer S extends Codecs;
+}
   ? S
   : V extends Codecs
     ? V
@@ -39,7 +41,9 @@ export type CodecsOf<V extends ConfigValue> = V extends { codecs: infer S extend
  * The action map of a config value: its `actions` field if it has one,
  * otherwise `Empty`.
  */
-export type ActionsOf<V extends ConfigValue> = V extends { actions: infer A } ? A : Empty;
+export type ActionsOf<V extends ConfigValue> = V extends { actions: infer A }
+  ? A
+  : Empty;
 
 /**
  * The shape `parse` returns: one value per root key, one nested object per section, keyed
