@@ -104,14 +104,3 @@ export type BoundSuperhref<
       >;
     }
 >;
-
-/** The instance returned by `superhref(...)`. */
-export interface Superhref<
-  C extends SuperhrefConfig,
-  A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>>,
-> {
-  parse(url: URL): SuperhrefParsed<C>;
-  patch(url: URL, partial: SuperhrefPatchInput<C>): URL;
-  clear(url: URL): URL;
-  bind(url: URL): BoundSuperhref<C, A>;
-}
