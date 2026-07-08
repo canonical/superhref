@@ -18,18 +18,16 @@ const config = {
 };
 const parsed = parse({ config, actions: {} }, new URL("https://x.test/"));
 
-// A root codec parses to its value type; a default rules out `undefined`.
+// A root codec parses to its value type; a default rules out `null`.
 type _enumRoot = ExpectTrue<Equal<(typeof parsed)["panel"], "open" | "closed">>;
-type _optionalRoot = ExpectTrue<
-  Equal<(typeof parsed)["q"], string | undefined>
->;
+type _optionalRoot = ExpectTrue<Equal<(typeof parsed)["q"], string | null>>;
 
 // A section parses to a nested object of its codecs' value types.
 type _sectionDefaulted = ExpectTrue<
   Equal<(typeof parsed)["bugs"]["page"], number>
 >;
 type _sectionOptional = ExpectTrue<
-  Equal<(typeof parsed)["bugs"]["severity"], string | undefined>
+  Equal<(typeof parsed)["bugs"]["severity"], string | null>
 >;
 
 // The result owns exactly the config's keys: nothing extra, nothing dropped.

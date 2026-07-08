@@ -30,10 +30,10 @@ describe("parse", () => {
     });
   });
 
-  it("yields codec defaults / undefined for absent keys", () => {
+  it("yields codec defaults / null for absent keys", () => {
     expect(parseAt("")).toEqual({
-      panel: undefined,
-      version: { id: undefined },
+      panel: null,
+      version: { id: null },
     });
   });
 
@@ -41,14 +41,14 @@ describe("parse", () => {
     expect(parseAt("?version.id=a+b%2Fc").version.id).toBe("a b/c");
   });
 
-  it("coerces an out-of-set enum value to its default (here: undefined)", () => {
-    expect(parseAt("?panel=nope").panel).toBeUndefined();
+  it("coerces an out-of-set enum value to its default (here: null)", () => {
+    expect(parseAt("?panel=nope").panel).toBeNull();
   });
 
   it("ignores keys the config does not own", () => {
     expect(parseAt("?utm=x&panel=version")).toEqual({
       panel: "version",
-      version: { id: undefined },
+      version: { id: null },
     });
   });
 });

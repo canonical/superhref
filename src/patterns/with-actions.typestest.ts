@@ -35,7 +35,7 @@ type _codecKept = ExpectTrue<
 // result.
 type Search = (typeof bugs)["actions"]["search"];
 type _stateParam = ExpectTrue<
-  Equal<Parameters<Search>[1], { page: number; q: string | undefined }>
+  Equal<Parameters<Search>[1], { page: number; q: string | null }>
 >;
 type _extraParam = ExpectTrue<Equal<Parameters<Search>[2], string>>;
 type _result = ExpectTrue<Equal<ReturnType<Search>, string>>;
@@ -44,7 +44,7 @@ type _result = ExpectTrue<Equal<ReturnType<Search>, string>>;
 // constraint: an action named after a codec key or the reserved patch/set
 // can't satisfy the error-string slot the constraint puts at that name.
 // (Bad codec keys themselves are pinned in validate/section.typestest.ts.)
-type SectionCodecs = { page: Codec<number | undefined> };
+type SectionCodecs = { page: Codec<number | null> };
 type ActionsArg = SectionActionMap<Parsed<SectionCodecs>> &
   SectionActionCollisions<SectionCodecs>;
 type _cleanActionOk = ExpectTrue<Extends<{ go: () => string }, ActionsArg>>;

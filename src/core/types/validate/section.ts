@@ -10,7 +10,12 @@
  * reports it exactly where the fix belongs.
  */
 
-import type { ActionsOf, CodecsOf } from "../config.js";
+import type {
+  ActionsOf,
+  CodecsOf,
+  ConfigValue,
+  SuperhrefConfig,
+} from "../config.js";
 import type { ValidKey } from "../key.js";
 
 /** `true` unless `T` is `never`. (Wrapping in a tuple stops union distribution.) */
@@ -46,9 +51,9 @@ export type ValidateCodecs<S> = {
     : `superhref: codec key "${K & string}" is not a valid URL key (letters/digits/_~- only, must start with a letter; "." is reserved)`;
 };
 
-type CodecKeys<V> = keyof CodecsOf<V> & string;
-type ActionNames<V> = keyof ActionsOf<V> & string;
-type BadCodecKeys<V> = {
+type CodecKeys<V extends ConfigValue> = keyof CodecsOf<V> & string;
+type ActionNames<V extends ConfigValue> = keyof ActionsOf<V> & string;
+type BadCodecKeys<V extends ConfigValue> = {
   [CK in CodecKeys<V>]: ValidKey<CK> extends true ? never : CK;
 }[CodecKeys<V>];
 
@@ -57,7 +62,7 @@ type BadCodecKeys<V> = {
  * codec key, a reserved action name, or a codec key and an action name that collide (both
  * would become members of the same handle).
  */
-export type SectionHasProblem<V> = true extends
+export type SectionHasProblem<V extends ConfigValue> = true extends
   | NotNever<CodecKeys<V> & ActionNames<V>> //        codec key × action name
   | NotNever<CodecKeys<V> & ReservedCodecKey> //      reserved codec key
   | NotNever<ActionNames<V> & ReservedActionName> //  reserved action name
@@ -66,9 +71,9 @@ export type SectionHasProblem<V> = true extends
   : false;
 
 /** The first matching message for a flagged section (only evaluated for bad sections). */
-export type SectionMsg<C, K extends keyof C> = [BadCodecKeys<C[K]>] extends [
-  never,
-]
+export type SectionMsg<C extends SuperhrefConfig, K extends keyof C> = [
+  BadCodecKeys<C[K]>,
+] extends [never]
   ? [CodecKeys<C[K]> & ActionNames<C[K]>] extends [never]
     ? [CodecKeys<C[K]> & ReservedCodecKey] extends [never]
       ? [ActionNames<C[K]> & ReservedActionName] extends [never]
