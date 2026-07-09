@@ -10,6 +10,7 @@
  * reports it exactly where the fix belongs.
  */
 
+import type { Codecs } from "../codec.js";
 import type {
   ActionsOf,
   CodecsOf,
@@ -31,7 +32,7 @@ export type ReservedActionName = "patch" | "set";
  * string, and a function is not a string, so the clash becomes a compile error at
  * that action.
  */
-export type SectionActionCollisions<S> = {
+export type SectionActionCollisions<S extends Codecs> = {
   [N in
     | (keyof S & string)
     | ReservedActionName]?: `superhref: section action "${N}" collides with a codec key or the reserved .${N}`;
@@ -43,7 +44,7 @@ export type SectionActionCollisions<S> = {
  * key keeps its codec. Since a codec can't BE that string, a bad codec key fails to
  * compile at that key, while the other keys keep their precise types.
  */
-export type ValidateCodecs<S> = {
+export type ValidateCodecs<S extends Codecs> = {
   [K in keyof S]: ValidKey<K & string> extends true
     ? K extends ReservedCodecKey
       ? `superhref: codec key "${K & string}" is reserved (patch/set/codecs/actions)`

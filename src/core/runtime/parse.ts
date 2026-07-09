@@ -18,10 +18,10 @@ import { innerKey } from "./keys.js";
  * @param url The URL to read; it is not modified.
  * @returns The parsed state, shaped by the config.
  */
-export const parse = <C extends SuperhrefConfig>(
+export function parse<C extends SuperhrefConfig>(
   ctx: Ctx<C>,
   url: URL,
-): SuperhrefParsed<C> => {
+): SuperhrefParsed<C> {
   const params = url.searchParams;
   const queryParams: Record<string, unknown> = {};
 
@@ -38,4 +38,4 @@ export const parse = <C extends SuperhrefConfig>(
   }
 
   return queryParams as unknown as SuperhrefParsed<C>;
-};
+}

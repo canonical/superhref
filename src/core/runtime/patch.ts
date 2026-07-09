@@ -23,11 +23,11 @@ import { writeKey } from "./write-key.js";
  * @param partial The nested partial update.
  * @returns A new URL with the update applied.
  */
-export const patch = <C extends SuperhrefConfig>(
+export function patch<C extends SuperhrefConfig>(
   ctx: Ctx<C>,
   url: URL,
   partial: SuperhrefPatchInput<C>,
-): URL => {
+): URL {
   const next = new URL(url.href);
   const params = next.searchParams;
 
@@ -60,4 +60,4 @@ export const patch = <C extends SuperhrefConfig>(
   }
 
   return next;
-};
+}

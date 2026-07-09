@@ -18,12 +18,12 @@ import type { AnyCodec } from "../types/codec.js";
  * @param codec The codec that serializes the value.
  * @param value The value to write.
  */
-export const writeKey = (
+export function writeKey(
   params: URLSearchParams,
   fullKey: string,
   codec: AnyCodec,
   value: unknown,
-): void => {
+): void {
   if (value === undefined) return;
   if (value === null) {
     params.delete(fullKey);
@@ -35,4 +35,4 @@ export const writeKey = (
     return;
   }
   params.set(fullKey, s);
-};
+}

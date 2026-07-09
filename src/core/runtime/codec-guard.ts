@@ -19,8 +19,11 @@ import type { AnyFunction } from "./context.js";
  * @returns `true` when the value is a codec.
  */
 // biome-ignore lint/suspicious/noExplicitAny: runtime type guard over untyped config values
-export const isCodec = (v: any): v is AnyCodec =>
-  !!v && typeof v.parse === "function" && typeof v.serialize === "function";
+export function isCodec(v: any): v is AnyCodec {
+  return (
+    !!v && typeof v.parse === "function" && typeof v.serialize === "function"
+  );
+}
 
 /**
  * Splits a section value into its codecs and actions. A section is either a
@@ -32,9 +35,10 @@ export const isCodec = (v: any): v is AnyCodec =>
  * @returns The codecs map and the action map, which is empty for a bare
  * section.
  */
-export const sectionOf = (
-  value: object,
-): { codecs: Codecs; actions: Record<string, AnyFunction> } => {
+export function sectionOf(value: object): {
+  codecs: Codecs;
+  actions: Record<string, AnyFunction>;
+} {
   const v = value as { codecs?: Codecs; actions?: Record<string, AnyFunction> };
   return { codecs: v.codecs ?? (value as Codecs), actions: v.actions ?? {} };
-};
+}

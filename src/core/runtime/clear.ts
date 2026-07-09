@@ -14,7 +14,7 @@ import { innerKey } from "./keys.js";
  * @param url The URL to derive from; it is not modified.
  * @returns A new URL without any owned keys.
  */
-export const clear = (ctx: Ctx, url: URL): URL => {
+export function clear(ctx: Ctx, url: URL): URL {
   const next = new URL(url.href);
   const params = next.searchParams;
 
@@ -28,4 +28,4 @@ export const clear = (ctx: Ctx, url: URL): URL => {
     }
   }
   return next;
-};
+}
