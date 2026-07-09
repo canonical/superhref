@@ -12,14 +12,16 @@ import type {
 } from "../type-testing/expect.js";
 import { enumCodec } from "./enum.js";
 
-// The value type is the literal union of the given values...
+// The value type is the literal union of the given values
 const plain = enumCodec(["x", "y"]);
 type _plain = ExpectTrue<Equal<typeof plain, Codec<"x" | "y" | null>>>;
 
-// ...and a `default` removes `undefined` from the union.
+//A `default` removes `null` from the union.
 const withDefault = enumCodec(["x", "y"], { default: "x" });
 type _withDefault = ExpectTrue<Equal<typeof withDefault, Codec<"x" | "y">>>;
 
 type SerializeArg = Parameters<(typeof plain)["serialize"]>[0];
 type _memberOk = ExpectTrue<Extends<"x", SerializeArg>>;
 type _outsiderRejected = ExpectFalse<Extends<"z", SerializeArg>>;
+type _nullOk = ExpectTrue<Extends<null, SerializeArg>>;
+type _undefinedRejected = ExpectFalse<Extends<undefined, SerializeArg>>;
