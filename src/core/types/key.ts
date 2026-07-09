@@ -44,8 +44,7 @@ type AllKeyChars<S extends string> = S extends ""
 
 /**
  * `true` when `S` is a valid URL key: a letter followed by letters, digits,
- * or the characters `_`, `~`, and `-`, matching the regex
- * `/^[A-Za-z][A-Za-z0-9_~-]*$/`.
+ * or the characters `_`, `~`, and `-`
  * @example `ValidKey<"sort_by">` resolves to `true`; `ValidKey<"a.b">` resolves to `false`.
  */
 export type ValidKey<S extends string> = S extends `${Letter}${string}`
