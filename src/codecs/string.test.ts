@@ -14,13 +14,12 @@ describe("strCodec", () => {
       expect(strCodec().parse("a b/c&d")).toBe("a b/c&d");
     });
 
-    it("absence (null) yields the default, or undefined when there is none", () => {
-      expect(strCodec().parse(null)).toBeUndefined();
+    it("absence (null) yields the default, or null when there is none", () => {
+      expect(strCodec().parse(null)).toBeNull();
       expect(strCodec({ default: "x" }).parse(null)).toBe("x");
     });
 
     it("an explicit empty value parses to '' rather than the default", () => {
-      // `?key=` means present and empty; only true absence (null) falls back to the default.
       expect(strCodec().parse("")).toBe("");
       expect(strCodec({ default: "x" }).parse("")).toBe("");
     });
@@ -32,19 +31,19 @@ describe("strCodec", () => {
       expect(strCodec().serialize("a b/c&d")).toBe("a b/c&d");
     });
 
-    it("undefined serializes to null (omit the key)", () => {
-      expect(strCodec().serialize(undefined)).toBeNull();
+    it("null (the absent value) serializes to null (omit the key)", () => {
+      expect(strCodec().serialize(null)).toBeNull();
     });
 
-    it("empty string omits with no default, but writes explicitly when one is provided", () => {
-      // Without a default, "" and absence collapse to the same thing, so omit the key.
-      expect(strCodec().serialize("")).toBeNull();
-      // With a default, write "" explicitly so parsing again keeps the empty string.
+    it("intentionally serializes the empty string verbatim, with no special treatment", () => {
+      expect(strCodec().serialize("")).toBe("");
       expect(strCodec({ default: "x" }).serialize("")).toBe("");
+      expect(strCodec({ default: "" }).serialize("")).toBe("");
     });
 
-    it("an explicit empty string default is honored: '' is written, not omitted", () => {
-      expect(strCodec({ default: "" }).serialize("")).toBe("");
+    it("keeps the empty string through serialize then parse instead of reviving the default", () => {
+      const c = strCodec({ default: "x" });
+      expect(c.parse(c.serialize(""))).toBe("");
     });
   });
 

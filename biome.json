@@ -33,6 +33,14 @@
           }
         }
       }
+    },
+    {
+      "includes": ["src/**/*.typestest.ts", "src/type-testing/**"],
+      "linter": {
+        "rules": {
+          "correctness": { "noUnusedVariables": "off" }
+        }
+      }
     }
   ]
 }
