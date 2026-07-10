@@ -13,9 +13,7 @@ import type {
 /**
  * Builds a section that has actions. Passing the codecs and actions as two
  * separate arguments lets each action's `patch` and `state` be typed from
- * the codecs automatically, with no annotation needed. This is the only way
- * to attach actions to a section; a section without actions is just a bare
- * codecs map.
+ * the codecs automatically, with no annotation needed.
  *
  * @typeParam S The section's codecs map.
  * @typeParam A The action map, inferred from `actions`.

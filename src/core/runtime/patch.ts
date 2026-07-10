@@ -13,7 +13,7 @@ import { writeKey } from "./write-key.js";
  * Applies a nested partial update and returns a new URL.
  *
  * A leaf `null` deletes a key; `undefined` or an absent key leaves it
- * unchanged. A section set to `null` clears every key under its prefix,
+ * unchanged. A section set to `null` clears every key the section owns,
  * while `undefined` or absence leaves the section unchanged. Keys the
  * config doesn't own are never touched.
  *
