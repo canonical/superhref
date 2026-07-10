@@ -3,5 +3,4 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-
 export { withActions } from "./with-actions.js";
