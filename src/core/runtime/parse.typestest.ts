@@ -30,7 +30,7 @@ type _sectionOptional = ExpectTrue<
   Equal<(typeof parsed)["bugs"]["severity"], string | null>
 >;
 
-// The result owns exactly the config's keys: nothing extra, nothing dropped.
+// The result owns exactly the config's keys
 type _exactKeys = ExpectTrue<
   Equal<keyof typeof parsed, "panel" | "q" | "bugs">
 >;
