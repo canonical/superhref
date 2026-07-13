@@ -19,10 +19,11 @@ import type {
  * @typeParam A The action map, inferred from `actions`.
  * @param codecs The section's codecs. The `ValidateCodecs<S>` intersection
  * flags a bad or reserved codec key at the key itself.
- * @param actions The section's actions. The intersection both infers `A` and
- * gives each action's `patch` and `state` their types, while
- * `SectionActionCollisions<S>` rejects an action whose name collides with a
- * codec key or the reserved `patch` and `set`.
+ * @param actions The section's actions. `A` is inferred from this argument,
+ * and its `SectionActionMap<Parsed<S>>` constraint gives each action's
+ * `patch` and `state` their types with no annotation needed, while the
+ * `SectionActionCollisions<S>` intersection rejects an action whose name
+ * collides with a codec key or the reserved `patch` and `set`.
  * @returns The `{ codecs, actions }` section value.
  * @example
  *   const range = withActions(
@@ -38,7 +39,7 @@ export function withActions<
   A extends SectionActionMap<Parsed<S>>,
 >(
   codecs: S & ValidateCodecs<S>,
-  actions: A & SectionActionMap<Parsed<S>> & SectionActionCollisions<S>,
+  actions: A & SectionActionCollisions<S>,
 ): Section<S, A> {
   return { codecs, actions };
 }

@@ -70,11 +70,13 @@ function applyKey(
 ): void {
   if (value === undefined) return;
   if (value === null) {
-    return params.delete(fullKey);
+    params.delete(fullKey);
+    return;
   }
   const s = codec.serialize(value);
   if (s === null) {
-    return params.delete(fullKey);
+    params.delete(fullKey);
+    return;
   }
   params.set(fullKey, s);
 }
