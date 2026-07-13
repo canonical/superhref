@@ -3,8 +3,8 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
+import type { Ctx } from "../types/context.js";
 import { isCodec, sectionOf } from "./codec-guard.js";
-import type { Ctx } from "./context.js";
 import { innerKey } from "./keys.js";
 
 /**

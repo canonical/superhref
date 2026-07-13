@@ -6,7 +6,7 @@
 import { describe, expect, it } from "vitest";
 
 import { enumCodec, strCodec } from "../../codecs/index.js";
-import type { Ctx } from "./context.js";
+import type { Ctx } from "../types/context.js";
 import { parse } from "./parse.js";
 
 const config = {
@@ -40,7 +40,6 @@ describe("parse", () => {
   it("hands each codec the decoded value (URLSearchParams owns the wire format)", () => {
     expect(parseAt("?version.id=a+b%2Fc").version.id).toBe("a b/c");
   });
-
 
   it("ignores keys the config does not own", () => {
     expect(parseAt("?utm=x&panel=version&version.unknown=x")).toEqual({

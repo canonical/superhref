@@ -5,13 +5,7 @@
 
 import { numCodec } from "../../codecs/number.js";
 import { strCodec } from "../../codecs/string.js";
-import type {
-  Equal,
-  ExpectFalse,
-  ExpectTrue,
-  Extends,
-} from "../../type-testing/expect.js";
-import type { SuperhrefPatchInput } from "../types/config.js";
+import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import { patch } from "./patch.js";
 
 const config = {
@@ -33,17 +27,5 @@ patch(ctx, url, { bugs: null });
 // The result is a new URL.
 type _returnsUrl = ExpectTrue<Equal<typeof next, URL>>;
 
-// A wrong value shape is not assignable to the patch input...
-type Input = SuperhrefPatchInput<typeof config>;
-type _wrongRootValue = ExpectFalse<Extends<{ panel: 3 }, Input>>;
-type _wrongSectionValue = ExpectFalse<
-  Extends<{ bugs: { page: "two" } }, Input>
->;
-type _sectionPayloadOnRoot = ExpectFalse<
-  Extends<{ panel: { page: 2 } }, Input>
->;
-// ...and a key the config doesn't own is rejected. That's an excess property
-// check, which exists only at a literal call site, so there is no `Extends`
-// equivalent.
 // @ts-expect-error a key the config doesn't own is rejected
 patch(ctx, url, { rogue: "x" });

@@ -6,7 +6,8 @@
 import { describe, expect, it } from "vitest";
 
 import { enumCodec, numCodec, strCodec } from "../../codecs/index.js";
-import type { Ctx } from "./context.js";
+import type { AnyCodec } from "../types/codec.js";
+import type { Ctx } from "../types/context.js";
 import { patch } from "./patch.js";
 
 const PANELS = ["overview", "version", "bugs"] as const;
@@ -63,6 +64,20 @@ describe("patch", () => {
       expect(
         patchAt("?panel=bugs&bugs.severity=high&bugs.page=2", { bugs: null }),
       ).toBe("?panel=bugs");
+    });
+  });
+
+  describe("serialize returning null", () => {
+    it("deletes the key when a codec serializes to null (no URL form)", () => {
+      const absent: AnyCodec = { parse: (raw) => raw, serialize: () => null };
+      const absentCtx: Ctx<{ k: AnyCodec }> = {
+        config: { k: absent },
+        actions: {},
+      };
+      expect(
+        patch(absentCtx, new URL("https://x.test/?k=hi"), { k: "anything" })
+          .search,
+      ).toBe("");
     });
   });
 

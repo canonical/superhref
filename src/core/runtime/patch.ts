@@ -3,11 +3,11 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
+import type { AnyCodec } from "../types/codec.js";
 import type { SuperhrefConfig, SuperhrefPatchInput } from "../types/config.js";
+import type { Ctx } from "../types/context.js";
 import { isCodec, sectionOf } from "./codec-guard.js";
-import type { Ctx } from "./context.js";
 import { innerKey } from "./keys.js";
-import { writeKey } from "./write-key.js";
 
 /**
  * Applies a nested partial update and returns a new URL.
@@ -39,12 +39,12 @@ export function patch<C extends SuperhrefConfig>(
     if (!configValue) continue;
 
     if (isCodec(configValue)) {
-      writeKey(params, key, configValue, valueToWrite);
+      applyKey(params, key, configValue, valueToWrite);
     } else {
       const { codecs } = sectionOf(configValue);
       if (valueToWrite === null) {
-        for (const subKey of Object.keys(codecs)) {
-          params.delete(innerKey(key, subKey));
+        for (const [subKey, codec] of Object.entries(codecs)) {
+          applyKey(params, innerKey(key, subKey), codec, null);
         }
       } else {
         for (const [subKey, subValue] of Object.entries(valueToWrite)) {
@@ -53,11 +53,28 @@ export function patch<C extends SuperhrefConfig>(
           const codec = codecs[subKey];
           if (!codec) continue;
 
-          writeKey(params, innerKey(key, subKey), codec, subValue);
+          applyKey(params, innerKey(key, subKey), codec, subValue);
         }
       }
     }
   }
 
   return next;
+}
+
+function applyKey(
+  params: URLSearchParams,
+  fullKey: string,
+  codec: AnyCodec,
+  value: unknown,
+): void {
+  if (value === undefined) return;
+  if (value === null) {
+    return params.delete(fullKey);
+  }
+  const s = codec.serialize(value);
+  if (s === null) {
+    return params.delete(fullKey);
+  }
+  params.set(fullKey, s);
 }

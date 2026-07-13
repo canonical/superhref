@@ -6,8 +6,8 @@
 import { describe, expect, it } from "vitest";
 
 import { enumCodec, strCodec } from "../../codecs/index.js";
+import type { Ctx } from "../types/context.js";
 import { clear } from "./clear.js";
-import type { Ctx } from "./context.js";
 
 const config = {
   panel: enumCodec(["overview", "version", "bugs"]),

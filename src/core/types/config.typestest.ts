@@ -16,6 +16,7 @@ import type {
   ConfigValue,
   OwnedKey,
   SuperhrefParsed,
+  SuperhrefPatchInput,
 } from "./config.js";
 import type { Empty } from "./util.js";
 
@@ -91,3 +92,14 @@ type _parsedRootValue = ExpectTrue<Equal<State["panel"], number>>;
 type _parsedSectionValue = ExpectTrue<Equal<State["bugs"]["severity"], string>>;
 // The parsed shape has exactly the config's keys, with no extras.
 type _parsedKeys = ExpectTrue<Equal<keyof State, "panel" | "bugs">>;
+
+// A patch input rejects wrong value shapes: a wrong root value, a wrong
+// section leaf, and a section payload placed on a root codec.
+type PatchInput = SuperhrefPatchInput<{ panel: Str; bugs: { page: Num } }>;
+type _wrongRootValue = ExpectFalse<Extends<{ panel: 3 }, PatchInput>>;
+type _wrongSectionValue = ExpectFalse<
+  Extends<{ bugs: { page: "two" } }, PatchInput>
+>;
+type _sectionPayloadOnRoot = ExpectFalse<
+  Extends<{ panel: { page: 2 } }, PatchInput>
+>;

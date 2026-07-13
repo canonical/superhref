@@ -9,7 +9,8 @@
  */
 
 import type { AnyCodec, Codecs } from "../types/codec.js";
-import type { AnyFunction } from "./context.js";
+import type { ConfigValue } from "../types/config.js";
+import type { AnyFunction } from "../types/util.js";
 
 /**
  * Tells whether a config value is a codec rather than a section. Codecs have
@@ -37,10 +38,7 @@ export function isCodec(v: ConfigValue): v is AnyCodec {
  * @returns The codecs map and the action map, which is empty for a bare
  * section.
  */
-export function sectionOf(value: object): {
-  codecs: Codecs;
-  actions: Record<string, AnyFunction>;
-} {
+export function sectionOf(value: Exclude<ConfigValue, AnyCodec>) {
   const v = value as { codecs?: Codecs; actions?: Record<string, AnyFunction> };
   return { codecs: v.codecs ?? (value as Codecs), actions: v.actions ?? {} };
 }
