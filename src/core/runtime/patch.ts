@@ -31,29 +31,29 @@ export function patch<C extends SuperhrefConfig>(
   const next = new URL(url.href);
   const params = next.searchParams;
 
-  for (const [key, val] of Object.entries(partial)) {
-    if (val === undefined) continue;
+  for (const [key, valueToWrite] of Object.entries(partial)) {
+    if (valueToWrite === undefined) continue;
 
-    const field = ctx.config[key];
+    const configValue = ctx.config[key];
 
-    if (!field) continue;
+    if (!configValue) continue;
 
-    if (isCodec(field)) {
-      writeKey(params, key, field, val);
+    if (isCodec(configValue)) {
+      writeKey(params, key, configValue, valueToWrite);
     } else {
-      const { codecs } = sectionOf(field);
-      if (val === null) {
-        for (const ck of Object.keys(codecs)) {
-          params.delete(innerKey(key, ck));
+      const { codecs } = sectionOf(configValue);
+      if (valueToWrite === null) {
+        for (const subKey of Object.keys(codecs)) {
+          params.delete(innerKey(key, subKey));
         }
       } else {
-        for (const [ck, cval] of Object.entries(val)) {
-          if (cval === undefined) continue;
+        for (const [subKey, subValue] of Object.entries(valueToWrite)) {
+          if (subValue === undefined) continue;
 
-          const codec = codecs[ck];
+          const codec = codecs[subKey];
           if (!codec) continue;
 
-          writeKey(params, innerKey(key, ck), codec, cval);
+          writeKey(params, innerKey(key, subKey), codec, subValue);
         }
       }
     }

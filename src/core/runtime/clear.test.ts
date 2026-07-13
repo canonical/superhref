@@ -27,9 +27,11 @@ describe("clear", () => {
   });
 
   it("drops only owned keys, keeping foreign ones in order", () => {
-    expect(clearAt("?utm=x&panel=bugs&version.id=1&ref=y")).toBe(
-      "?utm=x&ref=y",
-    );
+    expect(
+      clearAt(
+        "?utm=x&panel=bugs&version.id=1&ref=y&panel.unknown=x&version.unknown=x",
+      ),
+    ).toBe("?utm=x&ref=y&panel.unknown=x&version.unknown=x");
   });
 
   it("leaves the URL unchanged when the config owns nothing in it", () => {

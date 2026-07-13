@@ -25,12 +25,14 @@ export function parse<C extends SuperhrefConfig>(
   const params = url.searchParams;
   const queryParams: Record<string, unknown> = {};
 
-  for (const [key, value] of Object.entries(ctx.config)) {
-    if (isCodec(value)) {
-      queryParams[key] = value.parse(params.get(key));
+  for (const [key, configValue] of Object.entries(ctx.config)) {
+    if (isCodec(configValue)) {
+      queryParams[key] = configValue.parse(params.get(key));
     } else {
       const section: Record<string, unknown> = {};
-      for (const [subkey, codec] of Object.entries(sectionOf(value).codecs)) {
+      for (const [subkey, codec] of Object.entries(
+        sectionOf(configValue).codecs,
+      )) {
         section[subkey] = codec.parse(params.get(innerKey(key, subkey)));
       }
       queryParams[key] = section;

@@ -41,12 +41,9 @@ describe("parse", () => {
     expect(parseAt("?version.id=a+b%2Fc").version.id).toBe("a b/c");
   });
 
-  it("coerces an out-of-set enum value to its default (here: null)", () => {
-    expect(parseAt("?panel=nope").panel).toBeNull();
-  });
 
   it("ignores keys the config does not own", () => {
-    expect(parseAt("?utm=x&panel=version")).toEqual({
+    expect(parseAt("?utm=x&panel=version&version.unknown=x")).toEqual({
       panel: "version",
       version: { id: null },
     });

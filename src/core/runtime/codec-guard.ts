@@ -18,10 +18,12 @@ import type { AnyFunction } from "./context.js";
  * @param v The config value to test.
  * @returns `true` when the value is a codec.
  */
-// biome-ignore lint/suspicious/noExplicitAny: runtime type guard over untyped config values
-export function isCodec(v: any): v is AnyCodec {
+export function isCodec(v: ConfigValue): v is AnyCodec {
   return (
-    !!v && typeof v.parse === "function" && typeof v.serialize === "function"
+    "parse" in v &&
+    typeof v.parse === "function" &&
+    "serialize" in v &&
+    typeof v.serialize === "function"
   );
 }
 
