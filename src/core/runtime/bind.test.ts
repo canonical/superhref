@@ -17,9 +17,6 @@ import type { Ctx } from "../types/context.js";
 import type { Empty } from "../types/util.js";
 import { bind } from "./bind.js";
 
-// Build a typed `Ctx` inline, with `C` inferred from the config and `A` from
-// the actions, so `bind(ctx)` returns the real precisely typed bound object
-// for the tests to assert against, not a shape written by hand.
 const makeCtx = <
   C extends SuperhrefConfig,
   A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>> = Empty,
@@ -44,7 +41,6 @@ const ctx = makeCtx(
     bugs: withActions(
       { severity: enumCodec(SEVERITY), page: numCodec({ default: 1 }) },
       {
-        // a section action that reads state and takes an extra arg
         bump: (patch, state, by: number) =>
           patch({ page: (state.page ?? 1) + by }),
         reset: (patch) => patch({ severity: null, page: null }),
@@ -75,7 +71,7 @@ describe("bind hoisted values", () => {
     expect(queryParams.panel).toBeNull();
     expect(queryParams.version.id).toBeNull();
     expect(queryParams.bugs.severity).toBeNull();
-    expect(queryParams.bugs.page).toBe(1); // numCodec default
+    expect(queryParams.bugs.page).toBe(1);
   });
 });
 
@@ -121,12 +117,11 @@ describe("bind section methods", () => {
 
 describe("bind section actions", () => {
   it("dispatches with the section state seen at bind time and extra args", () => {
-    // bump reads state.page (3) and adds the arg, giving 5
+
     expect(bindAt("?bugs.page=3").bugs.bump(2)).toBe("?bugs.page=5");
   });
 
   it("sees the section codec default in the state seen at bind time", () => {
-    // with no page in the URL, state.page is the codec default (1), so 1 + 1 = 2
     expect(bindAt("").bugs.bump(1)).toBe("?bugs.page=2");
   });
 
@@ -147,7 +142,6 @@ describe("bind closures over the url and state seen at bind time", () => {
   it("each derived href is independent (no accumulation across calls)", () => {
     const queryParams = bindAt("?panel=overview");
     expect(queryParams.set("panel", "version")).toBe("?panel=version");
-    // does NOT see the earlier set call; it still derives from "?panel=overview"
     expect(queryParams.bugs.set("severity", "high")).toBe(
       "?panel=overview&bugs.severity=high",
     );
@@ -156,7 +150,7 @@ describe("bind closures over the url and state seen at bind time", () => {
   it("repeated action calls are stateless (each uses the state seen at bind time)", () => {
     const queryParams = bindAt("?bugs.page=3");
     expect(queryParams.bugs.bump(2)).toBe("?bugs.page=5");
-    expect(queryParams.bugs.bump(2)).toBe("?bugs.page=5"); // not 7
+    expect(queryParams.bugs.bump(2)).toBe("?bugs.page=5");
   });
 
   it("does not mutate the bound URL", () => {

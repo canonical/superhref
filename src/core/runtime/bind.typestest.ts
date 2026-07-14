@@ -3,11 +3,6 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// The bound object's shape is pinned in `core/types/bound.typestest.ts`; this
-// file pins that `bind` infers that shape from a runtime config value, so it
-// is asserted by usage (leaf types and key sets) rather than by an `Equal`
-// over the whole shape.
-
 import { enumCodec } from "../../codecs/enum.js";
 import { numCodec } from "../../codecs/number.js";
 import { strCodec } from "../../codecs/string.js";
@@ -16,7 +11,6 @@ import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import type { SuperhrefParsed, SuperhrefPatch } from "../types/config.js";
 import { bind } from "./bind.js";
 
-// Roots (with and without a default), a section with actions, a bare section.
 const config = {
   panel: enumCodec(["open", "closed"], { default: "closed" }),
   q: strCodec(),
