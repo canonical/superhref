@@ -17,7 +17,7 @@ import type {
   ConfigValue,
   SuperhrefConfig,
 } from "../config.js";
-import type { ValidKey } from "../key.js";
+import type { ValidKey } from "./key.js";
 
 /** `true` unless `T` is `never`. (Wrapping in a tuple stops union distribution.) */
 type NotNever<T> = [T] extends [never] ? false : true;

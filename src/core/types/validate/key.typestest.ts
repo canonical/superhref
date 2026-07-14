@@ -3,7 +3,7 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import type { ExpectFalse, ExpectTrue } from "../../type-testing/expect.js";
+import type { ExpectFalse, ExpectTrue } from "../../../type-testing/expect.js";
 import type { ValidKey } from "./key.js";
 
 // A valid key is a letter followed by letters, digits, or the characters
