@@ -9,12 +9,12 @@ import { enumCodec, strCodec } from "../../codecs/index.js";
 import type { Ctx } from "../types/context.js";
 import { clear } from "./clear.js";
 
-const config = {
+const schema = {
   panel: enumCodec(["overview", "version", "bugs"]),
   version: { id: strCodec() },
 };
-const ctx: Ctx<typeof config> = {
-  config,
+const ctx: Ctx<typeof schema> = {
+  schema,
   actions: {},
 };
 
@@ -34,7 +34,7 @@ describe("clear", () => {
     ).toBe("?utm=x&ref=y&panel.unknown=x&version.unknown=x");
   });
 
-  it("leaves the URL unchanged when the config owns nothing in it", () => {
+  it("leaves the URL unchanged when the schema owns nothing in it", () => {
     expect(clearAt("?utm=x")).toBe("?utm=x");
   });
 

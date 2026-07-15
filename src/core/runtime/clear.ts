@@ -10,7 +10,7 @@ import { innerKey } from "./keys.js";
 /**
  * Removes every owned key: all roots and all section keys.
  *
- * @param ctx The runtime context carrying the config.
+ * @param ctx The runtime context carrying the schema.
  * @param url The URL to derive from; it is not modified.
  * @returns A new URL without any owned keys.
  */
@@ -18,7 +18,7 @@ export function clear(ctx: Ctx, url: URL): URL {
   const next = new URL(url.href);
   const params = next.searchParams;
 
-  for (const [key, value] of Object.entries(ctx.config)) {
+  for (const [key, value] of Object.entries(ctx.schema)) {
     if (isCodec(value)) {
       params.delete(key);
     } else {

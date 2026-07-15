@@ -11,7 +11,7 @@ import type { Ctx } from "../types/context.js";
 import { patch } from "./patch.js";
 
 const PANELS = ["overview", "version", "bugs"] as const;
-const config = {
+const schema = {
   panel: enumCodec(PANELS),
   version: { id: strCodec() },
   bugs: {
@@ -19,8 +19,8 @@ const config = {
     page: numCodec({ default: 1, integer: true, min: 1 }),
   },
 };
-const ctx: Ctx<typeof config> = {
-  config,
+const ctx: Ctx<typeof schema> = {
+  schema,
   actions: {},
 };
 
@@ -71,7 +71,7 @@ describe("patch", () => {
     it("deletes the key when a codec serializes to null (no URL form)", () => {
       const absent: AnyCodec = { parse: (raw) => raw, serialize: () => null };
       const absentCtx: Ctx<{ k: AnyCodec }> = {
-        config: { k: absent },
+        schema: { k: absent },
         actions: {},
       };
       expect(
@@ -107,7 +107,7 @@ describe("patch", () => {
   });
 
   describe("foreign keys", () => {
-    it("leaves keys the config doesn't own untouched, preserving order", () => {
+    it("leaves keys the schema doesn't own untouched, preserving order", () => {
       expect(patchAt("?utm=x&panel=overview&ref=y", { panel: "bugs" })).toBe(
         "?utm=x&panel=bugs&ref=y",
       );

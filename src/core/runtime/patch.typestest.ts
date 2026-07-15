@@ -8,11 +8,11 @@ import { strCodec } from "../../codecs/string.js";
 import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import { patch } from "./patch.js";
 
-const config = {
+const schema = {
   panel: strCodec({ default: "all" }),
   bugs: { page: numCodec({ default: 1 }), q: strCodec() },
 };
-const ctx = { config, actions: {} };
+const ctx = { schema, actions: {} };
 const url = new URL("https://x.test/");
 
 // Any subset of keys may be patched; `null` deletes a key, `undefined` leaves
@@ -27,5 +27,5 @@ patch(ctx, url, { bugs: null });
 // The result is a new URL.
 type _returnsUrl = ExpectTrue<Equal<typeof next, URL>>;
 
-// @ts-expect-error a key the config doesn't own is rejected
+// @ts-expect-error a key the schema doesn't own is rejected
 patch(ctx, url, { rogue: "x" });

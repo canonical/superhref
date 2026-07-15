@@ -9,13 +9,13 @@ import { enumCodec, strCodec } from "../../codecs/index.js";
 import type { Ctx } from "../types/context.js";
 import { parse } from "./parse.js";
 
-const config = {
+const schema = {
   panel: enumCodec(["overview", "version", "bugs"]),
   version: { id: strCodec() },
 };
 
-const ctx: Ctx<typeof config> = {
-  config,
+const ctx: Ctx<typeof schema> = {
+  schema,
   actions: {},
 };
 
@@ -41,7 +41,7 @@ describe("parse", () => {
     expect(parseAt("?version.id=a+b%2Fc").version.id).toBe("a b/c");
   });
 
-  it("ignores keys the config does not own", () => {
+  it("ignores keys the schema does not own", () => {
     expect(parseAt("?utm=x&panel=version&version.unknown=x")).toEqual({
       panel: "version",
       version: { id: null },

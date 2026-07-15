@@ -4,7 +4,7 @@
  */
 
 /**
- * Runtime guards that tell the two config value shapes apart: `isCodec` for
+ * Runtime guards that tell the two schema value shapes apart: `isCodec` for
  * root codecs and `sectionOf` for reading a section's codecs and actions.
  */
 
@@ -13,10 +13,10 @@ import type { ConfigValue } from "../types/config.js";
 import type { AnyFunction } from "../types/util.js";
 
 /**
- * Tells whether a config value is a codec rather than a section. Codecs have
+ * Tells whether a schema value is a codec rather than a section. Codecs have
  * `parse` and `serialize` functions; sections don't.
  *
- * @param v The config value to test.
+ * @param v The schema value to test.
  * @returns `true` when the value is a codec.
  */
 export function isCodec(v: ConfigValue): v is AnyCodec {
@@ -34,7 +34,7 @@ export function isCodec(v: ConfigValue): v is AnyCodec {
  * `.codecs` property means the latter; otherwise the value itself is the
  * codecs map.
  *
- * @param value The section value from the config.
+ * @param value The section value from the schema.
  * @returns The codecs map and the action map, which is empty for a bare
  * section.
  */

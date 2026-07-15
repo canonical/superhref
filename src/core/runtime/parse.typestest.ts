@@ -9,14 +9,14 @@ import { strCodec } from "../../codecs/string.js";
 import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import { parse } from "./parse.js";
 
-// One config with the value shapes parse distinguishes: root codecs (with and
+// One schema with the value shapes parse distinguishes: root codecs (with and
 // without a default) and a section.
-const config = {
+const schema = {
   panel: enumCodec(["open", "closed"], { default: "closed" }),
   q: strCodec(),
   bugs: { page: numCodec({ default: 1 }), severity: strCodec() },
 };
-const parsed = parse({ config, actions: {} }, new URL("https://x.test/"));
+const parsed = parse({ schema, actions: {} }, new URL("https://x.test/"));
 
 // A root codec parses to its value type; a default rules out `null`.
 type _enumRoot = ExpectTrue<Equal<(typeof parsed)["panel"], "open" | "closed">>;
@@ -30,7 +30,7 @@ type _sectionOptional = ExpectTrue<
   Equal<(typeof parsed)["bugs"]["severity"], string | null>
 >;
 
-// The result owns exactly the config's keys
+// The result owns exactly the schema's keys
 type _exactKeys = ExpectTrue<
   Equal<keyof typeof parsed, "panel" | "q" | "bugs">
 >;

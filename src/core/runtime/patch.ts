@@ -15,10 +15,10 @@ import { innerKey } from "./keys.js";
  * A leaf `null` deletes a key; `undefined` or an absent key leaves it
  * unchanged. A section set to `null` clears every key the section owns,
  * while `undefined` or absence leaves the section unchanged. Keys the
- * config doesn't own are never touched.
+ * schema doesn't own are never touched.
  *
- * @typeParam C The config shape the payload is checked against.
- * @param ctx The runtime context carrying the config.
+ * @typeParam C The schema shape the payload is checked against.
+ * @param ctx The runtime context carrying the schema.
  * @param url The URL to derive from; it is not modified.
  * @param partial The nested partial update.
  * @returns A new URL with the update applied.
@@ -34,14 +34,14 @@ export function patch<C extends SuperhrefConfig>(
   for (const [key, valueToWrite] of Object.entries(partial)) {
     if (valueToWrite === undefined) continue;
 
-    const configValue = ctx.config[key];
+    const schemaValue = ctx.schema[key];
 
-    if (!configValue) continue;
+    if (!schemaValue) continue;
 
-    if (isCodec(configValue)) {
-      applyKey(params, key, configValue, valueToWrite);
+    if (isCodec(schemaValue)) {
+      applyKey(params, key, schemaValue, valueToWrite);
     } else {
-      const { codecs } = sectionOf(configValue);
+      const { codecs } = sectionOf(schemaValue);
       if (valueToWrite === null) {
         for (const [subKey, codec] of Object.entries(codecs)) {
           applyKey(params, innerKey(key, subKey), codec, null);

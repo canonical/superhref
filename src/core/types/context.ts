@@ -17,17 +17,17 @@ import type { Empty } from "./util.js";
 
 /**
  * The runtime context every operation reads from.
- * Carries the config `C` and the top level action map `A`. Both are needed
+ * Carries the schema `C` and the top level action map `A`. Both are needed
  * to produce a precisely typed bound object; operations that don't use the
  * actions can leave `A` at its `Empty` default.
  *
- * @typeParam C The config shape.
+ * @typeParam C The schema shape.
  * @typeParam A The top level action map.
  */
 export interface Ctx<
   C extends SuperhrefConfig = SuperhrefConfig,
   A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>> = Empty,
 > {
-  config: C;
+  schema: C;
   actions: A;
 }
