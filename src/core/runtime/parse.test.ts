@@ -1,0 +1,50 @@
+/*
+ * Copyright 2026 Canonical Ltd.  This software is licensed under the
+ * GNU Lesser General Public License version 3 (see the file LICENSE).
+ */
+
+import { describe, expect, it } from "vitest";
+
+import { enumCodec, strCodec } from "../../codecs/index.js";
+import type { Ctx } from "../types/context.js";
+import { parse } from "./parse.js";
+
+const schema = {
+  panel: enumCodec(["overview", "version", "bugs"]),
+  version: { id: strCodec() },
+};
+
+const ctx: Ctx<typeof schema> = {
+  schema,
+  actions: {},
+};
+
+const parseAt = (search: string) =>
+  parse(ctx, new URL(`https://x.test/${search}`));
+
+describe("parse", () => {
+  it("reads a root codec and a section's codecs by raw dotted key", () => {
+    expect(parseAt("?panel=bugs&version.id=1.2.3")).toEqual({
+      panel: "bugs",
+      version: { id: "1.2.3" },
+    });
+  });
+
+  it("yields codec defaults / null for absent keys", () => {
+    expect(parseAt("")).toEqual({
+      panel: null,
+      version: { id: null },
+    });
+  });
+
+  it("hands each codec the decoded value (URLSearchParams owns the wire format)", () => {
+    expect(parseAt("?version.id=a+b%2Fc").version.id).toBe("a b/c");
+  });
+
+  it("ignores keys the schema does not own", () => {
+    expect(parseAt("?utm=x&panel=version&version.unknown=x")).toEqual({
+      panel: "version",
+      version: { id: null },
+    });
+  });
+});

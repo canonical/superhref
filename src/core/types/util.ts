@@ -35,3 +35,7 @@ export type UnionToIntersection<U> = (
 ) extends (x: infer I) => void
   ? I
   : never;
+
+/** A function of any signature, for runtime code that dispatches by name. */
+// biome-ignore lint/suspicious/noExplicitAny: generic function alias for heterogeneous action signatures
+export type AnyFunction = (...args: any[]) => any;

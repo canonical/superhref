@@ -16,11 +16,12 @@ import type {
   ConfigValue,
   OwnedKey,
   SuperhrefParsed,
+  SuperhrefPatchInput,
 } from "./config.js";
 import type { Empty } from "./util.js";
 
-// A config: one root key, one section with two codecs.
-type Config = {
+// A schema: one root key, one section with two codecs.
+type Schema = {
   panel: AnyCodec;
   bugs: { severity: AnyCodec; page: AnyCodec };
 };
@@ -28,14 +29,14 @@ type Config = {
 // `OwnedKey` keeps root keys unchanged and expands sections into dotted
 // `section.codec` keys.
 type _ownedKeys = ExpectTrue<
-  Equal<OwnedKey<Config>, "panel" | "bugs.severity" | "bugs.page">
+  Equal<OwnedKey<Schema>, "panel" | "bugs.severity" | "bugs.page">
 >;
 
 // Negative: the bare section name is NOT an owned key; only its dotted
 // members are.
-type _noBareSection = ExpectFalse<Extends<"bugs", OwnedKey<Config>>>;
+type _noBareSection = ExpectFalse<Extends<"bugs", OwnedKey<Schema>>>;
 
-// A config with only root keys yields exactly those keys.
+// A schema with only root keys yields exactly those keys.
 type _rootsOnly = ExpectTrue<
   Equal<OwnedKey<{ a: AnyCodec; b: AnyCodec }>, "a" | "b">
 >;
@@ -68,26 +69,37 @@ type _actionsOfBareSectionIsNotNever = ExpectFalse<
   Equal<ActionsOf<{ id: Str }>, never>
 >;
 
-// A root codec is a valid config value.
-type _rootCodecIsConfigValue = ExpectTrue<Extends<Str, ConfigValue>>;
-// A bare codecs map is a valid config value.
-type _bareSectionIsConfigValue = ExpectTrue<Extends<{ id: Str }, ConfigValue>>;
-// A section with actions is a valid config value.
-type _sectionWithActionsIsConfigValue = ExpectTrue<
+// A root codec is a valid schema value.
+type _rootCodecIsSchemaValue = ExpectTrue<Extends<Str, ConfigValue>>;
+// A bare codecs map is a valid schema value.
+type _bareSectionIsSchemaValue = ExpectTrue<Extends<{ id: Str }, ConfigValue>>;
+// A section with actions is a valid schema value.
+type _sectionWithActionsIsSchemaValue = ExpectTrue<
   Extends<WithActions, ConfigValue>
 >;
-// A plain value is not a config value.
-type _plainValueIsNotConfigValue = ExpectFalse<Extends<5, ConfigValue>>;
-// An object whose properties are not codecs is not a config value.
-type _looseObjectIsNotConfigValue = ExpectFalse<
+// A plain value is not a schema value.
+type _plainValueIsNotSchemaValue = ExpectFalse<Extends<5, ConfigValue>>;
+// An object whose properties are not codecs is not a schema value.
+type _looseObjectIsNotSchemaValue = ExpectFalse<
   Extends<{ id: number }, ConfigValue>
 >;
 
-// The parsed shape of a config: one root codec, one section.
+// The parsed shape of a schema: one root codec, one section.
 type State = SuperhrefParsed<{ panel: Num; bugs: { severity: Str } }>;
 // A root key parses to its codec's value type.
 type _parsedRootValue = ExpectTrue<Equal<State["panel"], number>>;
 // A section key parses to a nested object of its codecs' value types.
 type _parsedSectionValue = ExpectTrue<Equal<State["bugs"]["severity"], string>>;
-// The parsed shape has exactly the config's keys, with no extras.
+// The parsed shape has exactly the schema's keys, with no extras.
 type _parsedKeys = ExpectTrue<Equal<keyof State, "panel" | "bugs">>;
+
+// A patch input rejects wrong value shapes: a wrong root value, a wrong
+// section leaf, and a section payload placed on a root codec.
+type PatchInput = SuperhrefPatchInput<{ panel: Str; bugs: { page: Num } }>;
+type _wrongRootValue = ExpectFalse<Extends<{ panel: 3 }, PatchInput>>;
+type _wrongSectionValue = ExpectFalse<
+  Extends<{ bugs: { page: "two" } }, PatchInput>
+>;
+type _sectionPayloadOnRoot = ExpectFalse<
+  Extends<{ panel: { page: 2 } }, PatchInput>
+>;
