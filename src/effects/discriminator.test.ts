@@ -48,14 +48,14 @@ const makeCtx = <
   C extends SuperhrefConfig,
   A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>> = Empty,
 >(
-  config: C,
+  schema: C,
   opts: {
     effects?: SuperhrefEffect[];
     actions?: A &
       ActionMap<SuperhrefPatch<NoInfer<C>>, SuperhrefParsed<NoInfer<C>>>;
   } = {},
 ): Ctx<C, A> => ({
-  config,
+  schema,
   effects: opts.effects ?? [],
   actions: (opts.actions ?? {}) as A,
 });

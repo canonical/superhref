@@ -12,7 +12,7 @@ import type { SuperhrefEffect } from "../core/types/effect.js";
  * URL state of the panels you switched away from. A `controlled` entry need
  * not be a real section, since clearing one with no URL state changes
  * nothing. `key` is carried in the effect's type, so it's checked against
- * the config; a typo there is a compile error, not an effect that silently
+ * the schema; a typo there is a compile error, not an effect that silently
  * does nothing.
  *
  * @typeParam K The discriminating key, kept at its literal type.

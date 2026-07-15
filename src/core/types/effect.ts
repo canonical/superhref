@@ -11,7 +11,7 @@
  *
  * @typeParam Req The keys this effect depends on: a root key or a dotted
  * `section.codec`. Surfaced at runtime as `requires`; naming them in the
- * type checks them against the config's keys, so a typo is a compile error
+ * type checks them against the schema's keys, so a typo is a compile error
  * rather than an effect that silently never runs.
  * @param next The patched `URLSearchParams`, mutated in place.
  * @param touched The full dotted key names the patch named, whether or not

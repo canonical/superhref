@@ -17,7 +17,7 @@ import type {
 import { discriminatorEffect } from "./discriminator.js";
 
 // The discriminating key keeps its literal type, root or dotted, so it can be
-// checked against the config's owned keys instead of widening to `string`.
+// checked against the schema's owned keys instead of widening to `string`.
 const eff = discriminatorEffect("panel", ["bugs", "prs"]);
 type _keyKept = ExpectTrue<Equal<typeof eff, SuperhrefEffect<"panel">>>;
 const dotted = discriminatorEffect("bugs.page", ["a"]);
@@ -45,7 +45,7 @@ type _wrongKey = ExpectFalse<
 >;
 
 // Through the factory, `options.effects` accepts an effect keyed by one of
-// the config's own keys, root or dotted, and nothing else.
+// the schema's own keys, root or dotted, and nothing else.
 superhref(
   { panel: enumCodec(["a", "b"]), bugs: { severity: enumCodec(["a", "b"]) } },
   { effects: [discriminatorEffect("panel", ["a", "b"])] },

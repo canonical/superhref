@@ -131,8 +131,8 @@ describe("patch", () => {
       search: string,
       partial: Record<string, unknown>,
     ): string => {
-      const c: Ctx<typeof config> = {
-        config,
+      const c: Ctx<typeof schema> = {
+        schema,
         effects: [dropVersion],
         actions: {},
       };
@@ -161,9 +161,9 @@ describe("patch", () => {
 
     // An empty patch still runs the effects once over the URL.
     const runEffects = (effects: SuperhrefEffect[], start: string): string => {
-      const cfg = { k: numCodec() };
-      const c: Ctx<typeof cfg> = {
-        config: cfg,
+      const localSchema = { k: numCodec() };
+      const c: Ctx<typeof localSchema> = {
+        schema: localSchema,
         effects,
         actions: {},
       };
@@ -193,9 +193,9 @@ describe("patch", () => {
       const capture: SuperhrefEffect = (_next, touched) => {
         seen = touched;
       };
-      const cfg = { k: numCodec() };
-      const c: Ctx<typeof cfg> = {
-        config: cfg,
+      const localSchema = { k: numCodec() };
+      const c: Ctx<typeof localSchema> = {
+        schema: localSchema,
         effects: [writeX, capture],
         actions: {},
       };
