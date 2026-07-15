@@ -62,7 +62,7 @@ describe("patch", () => {
   });
 
   it("ignores unknown patch keys at runtime (types reject them at compile time)", () => {
-    // @ts-expect-error `typo` is not in the config (a compile time guard).
+    // @ts-expect-error `typo` is not in the schema (a compile time guard).
     expect(app.patch(at("?panel=bugs"), { typo: 1 }).search).toBe(
       "?panel=bugs",
     );

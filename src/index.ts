@@ -12,7 +12,7 @@
  *
  * A minimal engine: `parse`/`patch`/`clear`/`bind`, one typed `.set(key, value)` per
  * level, and section plus top level actions. `URLSearchParams` owns
- * percent encoding, so codecs deal in plain values. A config value is one of three
+ * percent encoding, so codecs deal in plain values. A schema value is one of three
  * shapes: `{ key: codec }` (root key), `{ key: { …codecs } }` (actionless section), or
  * `{ key: withActions({ …codecs }, { …actions }) }` (section with actions).
  * @module superhref
@@ -38,7 +38,7 @@ export type {
   SuperhrefPatchInput,
 } from "./core/types/config.js";
 export type {
-  Section as SectionConfig,
+  Section as SectionSchema,
   SectionAction,
   SectionActionMap,
   SectionPatch,

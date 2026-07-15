@@ -3,10 +3,10 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import type { AllRootMemberNames, ReservedRoot } from "./config.js";
+import type { AllRootMemberNames, ReservedRoot } from "./schema.js";
 
 /**
- * Maps every config key and reserved instance method (`patch`/`clear`/`set`) to an
+ * Maps every schema key and reserved instance method (`patch`/`clear`/`set`) to an
  * error string type, all optional. Used as a constraint on a top level
  * action map: an action whose name matches one of these would have to BE
  * that error string, and a function is not a string, so the clash surfaces
@@ -15,5 +15,5 @@ import type { AllRootMemberNames, ReservedRoot } from "./config.js";
 export type ActionNameCollisions<C> = {
   [N in
     | AllRootMemberNames<C>
-    | ReservedRoot]?: `superhref: action "${N}" collides with the config key or instance method "${N}"`;
+    | ReservedRoot]?: `superhref: action "${N}" collides with the schema key or instance method "${N}"`;
 };

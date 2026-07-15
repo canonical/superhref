@@ -10,13 +10,13 @@ import type {
   Extends,
 } from "../../../type-testing/expect.js";
 import type { Codec } from "../codec.js";
-import type { ValidateConfigKeys } from "./config.js";
+import type { ValidateSchemaKeys } from "./schema.js";
 
 type Num = Codec<number>;
 
-// One config carrying every key class at once: each key is checked on its own,
+// One schema carrying every key class at once: each key is checked on its own,
 // so the bad keys must not degrade the good keys' types.
-type Checked = ValidateConfigKeys<{
+type Checked = ValidateSchemaKeys<{
   panel: Num;
   bugs: { page: Num };
   set: Num;
@@ -32,7 +32,7 @@ type _sectionKept = ExpectTrue<Equal<Checked["bugs"], { page: Num }>>;
 type _reservedRoot = ExpectTrue<
   Equal<
     Checked["set"],
-    `superhref: config key "set" is reserved (it would shadow the bound .set)`
+    `superhref: schema key "set" is reserved (it would shadow the bound .set)`
   >
 >;
 type _reservedRejectsCodec = ExpectFalse<Extends<Num, Checked["set"]>>;
@@ -41,7 +41,7 @@ type _reservedRejectsCodec = ExpectFalse<Extends<Num, Checked["set"]>>;
 type _invalidRoot = ExpectTrue<
   Equal<
     Checked["a.b"],
-    `superhref: config key "a.b" is not a valid URL key (letters/digits/_~- only, must start with a letter; "." is reserved)`
+    `superhref: schema key "a.b" is not a valid URL key (letters/digits/_~- only, must start with a letter; "." is reserved)`
   >
 >;
 type _sectionProblem = ExpectTrue<

@@ -17,28 +17,28 @@ import type { Ctx } from "./core/types/context.js";
 import type { Superhref } from "./core/types/superhref.js";
 import type { Empty } from "./core/types/util.js";
 import type { ActionNameCollisions } from "./core/types/validate/actions.js";
-import type { ValidateConfigKeys } from "./core/types/validate/config.js";
+import type { ValidateSchemaKeys } from "./core/types/validate/schema.js";
 
 /**
  * Build a superhref instance: a set of pure functions over a `URL` you pass in each time
- * (it holds no state and touches no globals). `config` maps each key to a root codec, a
+ * (it holds no state and touches no globals). `schema` maps each key to a root codec, a
  * bare codecs map (a section with no actions), or `withActions(...)` (a section with
  * actions); `options.actions` are top level actions.
  *
- * The config is validated entirely at compile time, each error landing at the offending
+ * The schema is validated entirely at compile time, each error landing at the offending
  * key: reserved keys, invalid key syntax, a section's own naming problems,
  * and an action that clashes with a key or method.
- * Nothing is checked again at runtime, so a config that bypasses the types
+ * Nothing is checked again at runtime, so a schema that bypasses the types
  * (plain JS, `as any`) is trusted as written.
  *
- * @typeParam C The config shape, inferred from `config`.
+ * @typeParam C The schema shape, inferred from `schema`.
  * @typeParam A The top level action map, inferred from `options.actions`.
- * @param config The config. Wrapping it in `ValidateConfigKeys` is what
+ * @param schema The schema. Wrapping it in `ValidateSchemaKeys` is what
  * surfaces a bad key as an error at the key itself, while leaving valid keys
- * alone so `C` still infers from the config.
+ * alone so `C` still infers from the schema.
  * @param options Top level actions. `NoInfer<C>` makes the actions check
  * against `C` without widening it; without it, an action whose name clashes
- * with a key collapses `C` and lands the error on the config.
+ * with a key collapses `C` and lands the error on the schema.
  * @returns The instance of pure functions: `parse`, `patch`, `clear`, and
  * `bind`.
  */
@@ -46,7 +46,7 @@ export function superhref<
   const C extends SuperhrefConfig,
   const A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>> = Empty,
 >(
-  config: ValidateConfigKeys<C>,
+  schema: ValidateSchemaKeys<C>,
   options?: {
     actions?: A &
       ActionMap<SuperhrefPatch<NoInfer<C>>, SuperhrefParsed<NoInfer<C>>> &
@@ -54,7 +54,7 @@ export function superhref<
   },
 ): Superhref<C, A> {
   const ctx: Ctx<C, A> = {
-    config: config as unknown as C,
+    schema: schema as unknown as C,
     actions: (options?.actions ?? {}) as A,
   };
 
