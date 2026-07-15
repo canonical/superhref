@@ -16,7 +16,10 @@ const schema = {
   q: strCodec(),
   bugs: { page: numCodec({ default: 1 }), severity: strCodec() },
 };
-const parsed = parse({ schema, actions: {} }, new URL("https://x.test/"));
+const parsed = parse(
+  { schema, effects: [], actions: {} },
+  new URL("https://x.test/"),
+);
 
 // A root codec parses to its value type; a default rules out `null`.
 type _enumRoot = ExpectTrue<Equal<(typeof parsed)["panel"], "open" | "closed">>;

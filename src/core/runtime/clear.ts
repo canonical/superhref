@@ -8,7 +8,8 @@ import { isCodec, sectionOf } from "./codec-guard.js";
 import { innerKey } from "./keys.js";
 
 /**
- * Removes every owned key: all roots and all section keys.
+ * Removes every owned key: all roots and all section keys. It runs no
+ * effects.
  *
  * @param ctx The runtime context carrying the schema.
  * @param url The URL to derive from; it is not modified.

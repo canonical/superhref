@@ -15,6 +15,7 @@ const schema = {
 };
 const ctx: Ctx<typeof schema> = {
   schema,
+  effects: [],
   actions: {},
 };
 

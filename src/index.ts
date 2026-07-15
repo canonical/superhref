@@ -11,14 +11,15 @@
  * holds nothing and is a set of pure functions over a `URL` you pass in each time.
  *
  * A minimal engine: `parse`/`patch`/`clear`/`bind`, one typed `.set(key, value)` per
- * level, and section plus top level actions. `URLSearchParams` owns
+ * level, effects that run after each patch, and section plus top level
+ * actions. `URLSearchParams` owns
  * percent encoding, so codecs deal in plain values. A schema value is one of three
  * shapes: `{ key: codec }` (root key), `{ key: { …codecs } }` (actionless section), or
  * `{ key: withActions({ …codecs }, { …actions }) }` (section with actions).
  * @module superhref
  */
 
-// The single entry point: codecs and patterns ride along.
+// The single entry point: codecs, patterns, and effects ride along.
 export * from "./codecs/index.js";
 export type {
   ActionMap,
@@ -37,6 +38,7 @@ export type {
   SuperhrefPatch,
   SuperhrefPatchInput,
 } from "./core/types/config.js";
+export type { SuperhrefEffect } from "./core/types/effect.js";
 export type {
   Section as SectionSchema,
   SectionAction,
@@ -44,5 +46,6 @@ export type {
   SectionPatch,
 } from "./core/types/section.js";
 export type { Superhref } from "./core/types/superhref.js";
+export * from "./effects/index.js";
 export * from "./patterns/index.js";
 export { superhref } from "./superhref.js";

@@ -13,11 +13,12 @@ import type {
   SuperhrefParsed,
   SuperhrefPatch,
 } from "./config.js";
+import type { SuperhrefEffect } from "./effect.js";
 import type { Empty } from "./util.js";
 
 /**
  * The runtime context every operation reads from.
- * Carries the schema `C` and the top level action map `A`. Both are needed
+ * Carries the schema `C`, the effects, and the top level action map `A`. Both are needed
  * to produce a precisely typed bound object; operations that don't use the
  * actions can leave `A` at its `Empty` default.
  *
@@ -29,5 +30,7 @@ export interface Ctx<
   A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>> = Empty,
 > {
   schema: C;
+  /** Effects that run after each patch, in array order. */
+  effects: SuperhrefEffect[];
   actions: A;
 }
