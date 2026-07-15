@@ -21,13 +21,13 @@ const makeCtx = <
   C extends SuperhrefConfig,
   A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>> = Empty,
 >(
-  config: C,
+  schema: C,
   opts: {
     actions?: A &
       ActionMap<SuperhrefPatch<NoInfer<C>>, SuperhrefParsed<NoInfer<C>>>;
   } = {},
 ): Ctx<C, A> => ({
-  config,
+  schema,
   actions: (opts.actions ?? {}) as A,
 });
 
@@ -117,7 +117,6 @@ describe("bind section methods", () => {
 
 describe("bind section actions", () => {
   it("dispatches with the section state seen at bind time and extra args", () => {
-
     expect(bindAt("?bugs.page=3").bugs.bump(2)).toBe("?bugs.page=5");
   });
 

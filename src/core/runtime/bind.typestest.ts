@@ -11,7 +11,7 @@ import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import type { SuperhrefParsed, SuperhrefPatch } from "../types/config.js";
 import { bind } from "./bind.js";
 
-const config = {
+const schema = {
   panel: enumCodec(["open", "closed"], { default: "closed" }),
   q: strCodec(),
   bugs: withActions(
@@ -20,15 +20,15 @@ const config = {
   ),
   filters: { tag: strCodec() },
 };
-type Cfg = typeof config;
+type Schema = typeof schema;
 
 const bound = bind(
   {
-    config,
+    schema,
     actions: {
       reset: (
-        patch: SuperhrefPatch<Cfg>,
-        _state: SuperhrefParsed<Cfg>,
+        patch: SuperhrefPatch<Schema>,
+        _state: SuperhrefParsed<Schema>,
         hard: boolean,
       ) => patch(hard ? { q: null, panel: null } : { q: null }),
     },

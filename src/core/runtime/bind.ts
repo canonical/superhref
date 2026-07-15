@@ -18,7 +18,7 @@ import { isCodec, sectionOf } from "./codec-guard.js";
 import { parse } from "./parse.js";
 import { patch } from "./patch.js";
 
-// bind is the dynamic zone: it builds the bound object by walking the config at runtime by
+// bind is the dynamic zone: it builds the bound object by walking the schema at runtime by
 // indexing parsed `state` and assigning by runtime key, none of it statically typeable. So
 // those values use this one `any` alias; the precise public shape is restored by the cast
 // at return.
@@ -33,9 +33,9 @@ type Dynamic = Record<string, any>;
  * `.set("parameter", value)` returns a new search string with that parameter
  * updated. The model itself is never mutated.
  *
- * @typeParam C The config shape.
+ * @typeParam C The schema shape.
  * @typeParam A The top level action map.
- * @param ctx The runtime context carrying the config and actions.
+ * @param ctx The runtime context carrying the schema and actions.
  * @param url The URL the model reads from; it is not modified.
  * @returns The bound object with values, section handles, and methods.
  */
@@ -56,7 +56,7 @@ export const bind = <
     set: (key: string, value: unknown) => patchStr({ [key]: value }),
   };
 
-  for (const [sectionKey, value] of Object.entries(ctx.config)) {
+  for (const [sectionKey, value] of Object.entries(ctx.schema)) {
     queryParams[sectionKey] = buildSection(sectionKey, value, state, patchStr);
   }
 
