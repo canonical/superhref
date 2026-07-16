@@ -18,10 +18,6 @@ import { isCodec, sectionOf } from "./codec-guard.js";
 import { parse } from "./parse.js";
 import { patch } from "./patch.js";
 
-// bind is the dynamic zone: it builds the bound object by walking the schema at runtime by
-// indexing parsed `state` and assigning by runtime key, none of it statically typeable. So
-// those values use this one `any` alias; the precise public shape is restored by the cast
-// at return.
 // biome-ignore lint/suspicious/noExplicitAny: bound object is built by runtime key indexing; precise shape restored by the cast at return
 type Dynamic = Record<string, any>;
 
@@ -52,7 +48,7 @@ export const bind = <
 
   const queryParams: Dynamic = {
     patch: patchStr,
-    clear: () => clear(ctx, url).search || "?";,
+    clear: () => clear(ctx, url).search || "?",
     set: (key: string, value: unknown) => patchStr({ [key]: value }),
   };
 

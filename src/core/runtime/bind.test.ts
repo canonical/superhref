@@ -95,6 +95,10 @@ describe("bind root methods", () => {
       "?utm=x",
     );
   });
+
+  it("clear with only owned keys returns ?", () => {
+    expect(bindAt("?panel=overview").clear()).toBe("?");
+  });
 });
 
 describe("bind section methods", () => {
