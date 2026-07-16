@@ -11,6 +11,10 @@
  */
 
 import type { KeySep } from "../../runtime/keys.js";
+import type {
+  RESERVED_ACTION_NAMES,
+  RESERVED_CODEC_KEYS,
+} from "../../runtime/schema-guard.js";
 import type { Codecs } from "../codec.js";
 import type {
   ActionsOf,
@@ -23,8 +27,8 @@ import type { ValidKey } from "./key.js";
 /** `true` unless `T` is `never`. (Wrapping in a tuple stops union distribution.) */
 type NotNever<T> = [T] extends [never] ? false : true;
 
-export type ReservedCodecKey = "patch" | "set" | "codecs" | "actions";
-export type ReservedActionName = "patch" | "set";
+export type ReservedCodecKey = (typeof RESERVED_CODEC_KEYS)[number];
+export type ReservedActionName = (typeof RESERVED_ACTION_NAMES)[number];
 
 /**
  * Maps every codec key in `S` and the reserved handle methods (`patch`/`set`) to an
