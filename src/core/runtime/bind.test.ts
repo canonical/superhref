@@ -81,7 +81,7 @@ describe("bind root methods", () => {
   });
 
   it("set null deletes the key", () => {
-    expect(bindAt("?panel=overview").set("panel", null)).toBe("");
+    expect(bindAt("?panel=overview").set("panel", null)).toBe("?");
   });
 
   it("patch applies many keys at once", () => {
@@ -125,7 +125,7 @@ describe("bind section actions", () => {
   });
 
   it("scopes its patch to the section", () => {
-    expect(bindAt("?bugs.severity=high&bugs.page=3").bugs.reset()).toBe("");
+    expect(bindAt("?bugs.severity=high&bugs.page=3").bugs.reset()).toBe("?");
   });
 });
 

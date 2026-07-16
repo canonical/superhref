@@ -47,12 +47,12 @@ export const bind = <
   url: URL,
 ): BoundSuperhref<C, A> => {
   const patchStr = (partial: Dynamic) =>
-    patch(ctx, url, partial as SuperhrefPatchInput<C>).search;
+    patch(ctx, url, partial as SuperhrefPatchInput<C>).search || "?";
   const state: Dynamic = parse(ctx, url);
 
   const queryParams: Dynamic = {
     patch: patchStr,
-    clear: () => clear(ctx, url).search,
+    clear: () => clear(ctx, url).search || "?";,
     set: (key: string, value: unknown) => patchStr({ [key]: value }),
   };
 
