@@ -56,9 +56,9 @@ export const bind = <
     queryParams[sectionKey] = buildSection(sectionKey, value, state, patchStr);
   }
 
-  for (const [an, fn] of Object.entries(ctx.actions))
-    queryParams[an] = (...args: unknown[]) =>
-      (fn as AnyFunction)(patchStr, state, ...args);
+  for (const [actionName, actionHandler] of Object.entries(ctx.actions))
+    queryParams[actionName] = (...args: unknown[]) =>
+      (actionHandler as AnyFunction)(patchStr, state, ...args);
 
   return queryParams as unknown as BoundSuperhref<C, A>;
 };
