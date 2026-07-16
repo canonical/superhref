@@ -26,11 +26,7 @@ const reservedRootNamesStr = RESERVED_ROOT_NAMES.join("/");
 const reservedCodecKeysStr = RESERVED_CODEC_KEYS.join("/");
 const reservedActionNamesStr = RESERVED_ACTION_NAMES.join("/");
 
-const validated = new WeakSet<object>();
-
 export function assertValidSchema(ctx: Ctx): void {
-  if (validated.has(ctx)) return;
-
   const problems: string[] = [];
 
   if (!isRecord(ctx.schema))
@@ -74,7 +70,6 @@ export function assertValidSchema(ctx: Ctx): void {
   }
 
   if (problems.length > 0) throw new TypeError(problems.join("\n"));
-  validated.add(ctx);
 }
 
 function isRecord(v: unknown): v is Record<string, unknown> {

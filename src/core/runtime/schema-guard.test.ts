@@ -8,7 +8,6 @@ import { describe, expect, it } from "vitest";
 import { enumCodec, numCodec, strCodec } from "../../codecs/index.js";
 import { withActions } from "../../patterns/index.js";
 import type { Ctx } from "../types/context.js";
-import { bind } from "./bind.js";
 import { KEY_SEP } from "./keys.js";
 import { assertValidSchema } from "./schema-guard.js";
 
@@ -186,13 +185,5 @@ describe("assertValidSchema reports every problem at once", () => {
     expect(() => assertValidSchema(ctx)).toThrow(
       'superhref: action "clear" is reserved',
     );
-  });
-});
-
-describe("bind guards the schema", () => {
-  it("rejects a colliding schema before building the bound object", () => {
-    expect(() =>
-      bind(ctxOf({ patch: strCodec() }), new URL("https://x.test/")),
-    ).toThrow('superhref: schema key "patch" is reserved (patch/clear/set)');
   });
 });

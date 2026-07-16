@@ -17,7 +17,6 @@ import { clear } from "./clear.js";
 import { isCodec, sectionOf } from "./codec-guard.js";
 import { parse } from "./parse.js";
 import { patch } from "./patch.js";
-import { assertValidSchema } from "./schema-guard.js";
 
 // biome-ignore lint/suspicious/noExplicitAny: bound object is built by runtime key indexing; precise shape restored by the cast at return
 type Dynamic = Record<string, any>;
@@ -43,7 +42,6 @@ export const bind = <
   ctx: Ctx<C, A>,
   url: URL,
 ): BoundSuperhref<C, A> => {
-  assertValidSchema(ctx);
   const patchStr = (partial: Dynamic) =>
     patch(ctx, url, partial as SuperhrefPatchInput<C>).search || "?";
   const state: Dynamic = parse(ctx, url);
