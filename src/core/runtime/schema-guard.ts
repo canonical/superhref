@@ -3,8 +3,8 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import type { ConfigValue } from "../types/config.js";
 import type { Ctx } from "../types/context.js";
+import type { ConfigValue } from "../types/schema.js";
 import { isCodec } from "./codec-guard.js";
 import { KEY_SEP } from "./keys.js";
 

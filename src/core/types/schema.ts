@@ -4,9 +4,9 @@
  */
 
 /**
- * The config shape and every type derived from it: what a config value may
+ * The schema shape and every type derived from it: what a config value may
  * be, the shape `parse` returns, the payload `patch` accepts, and the full
- * set of URL keys a config owns.
+ * set of URL keys a schema owns.
  */
 
 import type { Dotted } from "../runtime/keys.js";
@@ -24,7 +24,7 @@ import type { Empty, Pretty } from "./util.js";
  */
 // biome-ignore lint/suspicious/noExplicitAny: keeps any concrete section assignable to ConfigValue (see above)
 export type ConfigValue = AnyCodec | Codecs | Section<Codecs, any>;
-export type SuperhrefConfig = Record<string, ConfigValue>;
+export type SuperhrefSchema = Record<string, ConfigValue>;
 
 /**
  * The codecs of a config value: its `codecs` field if it has one, otherwise the value
@@ -50,10 +50,10 @@ export type ActionsOf<V extends ConfigValue> = V extends { actions: infer A }
  * by the raw URL key. The `Pretty` wrappers are cosmetic; they make editors
  * show the expanded object rather than a type alias name.
  */
-export type SuperhrefParsed<C extends SuperhrefConfig> = Pretty<{
-  [K in keyof C]: C[K] extends AnyCodec
-    ? CodecValue<C[K]>
-    : Pretty<Parsed<CodecsOf<C[K]>>>;
+export type SuperhrefParsed<S extends SuperhrefSchema> = Pretty<{
+  [K in keyof S]: S[K] extends AnyCodec
+    ? CodecValue<S[K]>
+    : Pretty<Parsed<CodecsOf<S[K]>>>;
 }>;
 
 /**
@@ -68,24 +68,24 @@ type SectionPatchInput<S extends Codecs> = Pretty<{
  * The shape `patch` accepts: every key optional. `null` deletes a key (or clears a whole
  * section); `undefined`, or an absent key, leaves it unchanged.
  */
-export type SuperhrefPatchInput<C extends SuperhrefConfig> = Pretty<{
-  [K in keyof C]?: C[K] extends AnyCodec
-    ? CodecValue<C[K]> | null
-    : SectionPatchInput<CodecsOf<C[K]>> | null;
+export type SuperhrefPatchInput<S extends SuperhrefSchema> = Pretty<{
+  [K in keyof S]?: S[K] extends AnyCodec
+    ? CodecValue<S[K]> | null
+    : SectionPatchInput<CodecsOf<S[K]>> | null;
 }>;
 
 /** Applies a nested partial update and returns the new search string. */
-export type SuperhrefPatch<C extends SuperhrefConfig> = (
-  partial: SuperhrefPatchInput<C>,
+export type SuperhrefPatch<S extends SuperhrefSchema> = (
+  partial: SuperhrefPatchInput<S>,
 ) => string;
 
 /**
- * Every full URL key the config owns: each root key, plus `section.codec` for every codec
+ * Every full URL key the schema owns: each root key, plus `section.codec` for every codec
  * in every section.
  * @example `{ panel: codec; bugs: { severity: codec } }` resolves to `"panel" | "bugs.severity"`.
  */
-export type OwnedKey<C extends SuperhrefConfig> = {
-  [K in keyof C & string]: C[K] extends AnyCodec
+export type OwnedKey<S extends SuperhrefSchema> = {
+  [K in keyof S & string]: S[K] extends AnyCodec
     ? K
-    : Dotted<K, keyof CodecsOf<C[K]> & string>;
-}[keyof C & string];
+    : Dotted<K, keyof CodecsOf<S[K]> & string>;
+}[keyof S & string];

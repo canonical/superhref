@@ -3,8 +3,8 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import type { SuperhrefConfig, SuperhrefParsed } from "../types/config.js";
 import type { Ctx } from "../types/context.js";
+import type { SuperhrefParsed, SuperhrefSchema } from "../types/schema.js";
 import { isCodec, sectionOf } from "./codec-guard.js";
 import { innerKey } from "./keys.js";
 
@@ -13,15 +13,15 @@ import { innerKey } from "./keys.js";
  * object per section, keyed by the raw URL key. `URLSearchParams.get`
  * applies percent decoding, so codecs receive plain values.
  *
- * @typeParam C The schema shape the result is derived from.
+ * @typeParam S The schema shape the result is derived from.
  * @param ctx The runtime context carrying the schema.
  * @param url The URL to read; it is not modified.
  * @returns The parsed state, shaped by the schema.
  */
-export function parse<C extends SuperhrefConfig>(
-  ctx: Ctx<C>,
+export function parse<S extends SuperhrefSchema>(
+  ctx: Ctx<S>,
   url: URL,
-): SuperhrefParsed<C> {
+): SuperhrefParsed<S> {
   const params = url.searchParams;
   const queryParams: Record<string, unknown> = {};
 
@@ -39,5 +39,5 @@ export function parse<C extends SuperhrefConfig>(
     }
   }
 
-  return queryParams as unknown as SuperhrefParsed<C>;
+  return queryParams as unknown as SuperhrefParsed<S>;
 }

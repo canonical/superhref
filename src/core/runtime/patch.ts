@@ -4,8 +4,8 @@
  */
 
 import type { AnyCodec } from "../types/codec.js";
-import type { SuperhrefConfig, SuperhrefPatchInput } from "../types/config.js";
 import type { Ctx } from "../types/context.js";
+import type { SuperhrefPatchInput, SuperhrefSchema } from "../types/schema.js";
 import { isCodec, sectionOf } from "./codec-guard.js";
 import { innerKey } from "./keys.js";
 
@@ -17,16 +17,16 @@ import { innerKey } from "./keys.js";
  * while `undefined` or absence leaves the section unchanged. Keys the
  * schema doesn't own are never touched.
  *
- * @typeParam C The schema shape the payload is checked against.
+ * @typeParam S The schema shape the payload is checked against.
  * @param ctx The runtime context carrying the schema.
  * @param url The URL to derive from; it is not modified.
  * @param partial The nested partial update.
  * @returns A new URL with the update applied.
  */
-export function patch<C extends SuperhrefConfig>(
-  ctx: Ctx<C>,
+export function patch<S extends SuperhrefSchema>(
+  ctx: Ctx<S>,
   url: URL,
-  partial: SuperhrefPatchInput<C>,
+  partial: SuperhrefPatchInput<S>,
 ): URL {
   const next = new URL(url.href);
   const params = next.searchParams;

@@ -19,8 +19,8 @@ import type {
   ActionsOf,
   CodecsOf,
   ConfigValue,
-  SuperhrefConfig,
-} from "../config.js";
+  SuperhrefSchema,
+} from "../schema.js";
 import type { InvalidKeyMsg, ValidKey } from "./key.js";
 
 /** `true` unless `T` is `never`. (Wrapping in a tuple stops union distribution.) */
@@ -76,14 +76,14 @@ export type SectionHasProblem<V extends ConfigValue> = true extends
   : false;
 
 /** The first matching message for a flagged section (only evaluated for bad sections). */
-export type SectionMsg<C extends SuperhrefConfig, K extends keyof C> = [
-  BadCodecKeys<C[K]>,
+export type SectionMsg<S extends SuperhrefSchema, K extends keyof S> = [
+  BadCodecKeys<S[K]>,
 ] extends [never]
-  ? [CodecKeys<C[K]> & ActionNames<C[K]>] extends [never]
-    ? [CodecKeys<C[K]> & ReservedCodecKey] extends [never]
-      ? [ActionNames<C[K]> & ReservedActionName] extends [never]
+  ? [CodecKeys<S[K]> & ActionNames<S[K]>] extends [never]
+    ? [CodecKeys<S[K]> & ReservedCodecKey] extends [never]
+      ? [ActionNames<S[K]> & ReservedActionName] extends [never]
         ? never
-        : `superhref: section "${K & string}" has an action named "${ActionNames<C[K]> & ReservedActionName}" (patch/set are reserved)`
-      : `superhref: section "${K & string}" has a reserved codec key "${CodecKeys<C[K]> & ReservedCodecKey}" (patch/set/codecs/actions)`
-    : `superhref: section "${K & string}" has a codec key and an action named "${CodecKeys<C[K]> & ActionNames<C[K]>}"`
-  : `superhref: section "${K & string}" has an invalid codec key "${BadCodecKeys<C[K]>}"`;
+        : `superhref: section "${K & string}" has an action named "${ActionNames<S[K]> & ReservedActionName}" (patch/set are reserved)`
+      : `superhref: section "${K & string}" has a reserved codec key "${CodecKeys<S[K]> & ReservedCodecKey}" (patch/set/codecs/actions)`
+    : `superhref: section "${K & string}" has a codec key and an action named "${CodecKeys<S[K]> & ActionNames<S[K]>}"`
+  : `superhref: section "${K & string}" has an invalid codec key "${BadCodecKeys<S[K]>}"`;

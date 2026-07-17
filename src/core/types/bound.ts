@@ -14,11 +14,11 @@ import type {
   ActionsOf,
   CodecsOf,
   ConfigValue,
-  SuperhrefConfig,
   SuperhrefParsed,
   SuperhrefPatch,
   SuperhrefPatchInput,
-} from "./config.js";
+  SuperhrefSchema,
+} from "./schema.js";
 import type { Action } from "./section.js";
 import type { Pretty, UnionToIntersection } from "./util.js";
 
@@ -66,19 +66,19 @@ export type SectionHandle<V extends ConfigValue> = Pretty<
     }
 >;
 
-type RootKeys<C extends SuperhrefConfig> = {
-  [K in keyof C]: C[K] extends AnyCodec ? K : never;
-}[keyof C];
+type RootKeys<S extends SuperhrefSchema> = {
+  [K in keyof S]: S[K] extends AnyCodec ? K : never;
+}[keyof S];
 // A section key is any key whose value is not a root codec.
-type SectionKeys<C extends SuperhrefConfig> = {
-  [K in keyof C]: C[K] extends AnyCodec ? never : K;
-}[keyof C];
+type SectionKeys<S extends SuperhrefSchema> = {
+  [K in keyof S]: S[K] extends AnyCodec ? never : K;
+}[keyof S];
 
-export type RootValues<C extends SuperhrefConfig> = {
-  [K in RootKeys<C>]: CodecValue<C[K]>;
+export type RootValues<S extends SuperhrefSchema> = {
+  [K in RootKeys<S>]: CodecValue<S[K]>;
 };
-export type PerSectionHandles<C extends SuperhrefConfig> = {
-  [K in SectionKeys<C>]: SectionHandle<C[K]>;
+export type PerSectionHandles<S extends SuperhrefSchema> = {
+  [K in SectionKeys<S>]: SectionHandle<S[K]>;
 };
 
 /**
@@ -86,21 +86,21 @@ export type PerSectionHandles<C extends SuperhrefConfig> = {
  * bound top level actions, and `patch`/`clear`/`set`.
  */
 export type BoundSuperhref<
-  C extends SuperhrefConfig,
-  A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>>,
+  S extends SuperhrefSchema,
+  A extends ActionMap<SuperhrefPatch<S>, SuperhrefParsed<S>>,
 > = Pretty<
-  RootValues<C> &
-    PerSectionHandles<C> &
+  RootValues<S> &
+    PerSectionHandles<S> &
     ResolvedActions<A> & {
-      patch: (partial: SuperhrefPatchInput<C>) => string;
+      patch: (partial: SuperhrefPatchInput<S>) => string;
       clear: () => string;
       set: UnionToIntersection<
         {
-          [K in RootKeys<C>]: (
+          [K in RootKeys<S>]: (
             key: K,
-            value: CodecValue<C[K]> | null,
+            value: CodecValue<S[K]> | null,
           ) => string;
-        }[RootKeys<C>]
+        }[RootKeys<S>]
       >;
     }
 >;

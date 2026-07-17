@@ -5,19 +5,19 @@
 
 import type { ActionMap, BoundSuperhref } from "./bound.js";
 import type {
-  SuperhrefConfig,
   SuperhrefParsed,
   SuperhrefPatch,
   SuperhrefPatchInput,
-} from "./config.js";
+  SuperhrefSchema,
+} from "./schema.js";
 
 /** The instance returned by `superhref(...)`. */
 export interface Superhref<
-  C extends SuperhrefConfig,
-  A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>>,
+  S extends SuperhrefSchema,
+  A extends ActionMap<SuperhrefPatch<S>, SuperhrefParsed<S>>,
 > {
-  parse(url: URL): SuperhrefParsed<C>;
-  patch(url: URL, partial: SuperhrefPatchInput<C>): URL;
+  parse(url: URL): SuperhrefParsed<S>;
+  patch(url: URL, partial: SuperhrefPatchInput<S>): URL;
   clear(url: URL): URL;
-  bind(url: URL): BoundSuperhref<C, A>;
+  bind(url: URL): BoundSuperhref<S, A>;
 }
