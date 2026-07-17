@@ -20,7 +20,9 @@ const at = (search = ""): URL => new URL(`https://example.test/app${search}`);
 
 describe("parse", () => {
   it("reads nested state, raw keys, with defaults", () => {
-    expect(QueryParamsSchema.parse(at("?panel=bugs&bugs.severity=high"))).toEqual({
+    expect(
+      QueryParamsSchema.parse(at("?panel=bugs&bugs.severity=high")),
+    ).toEqual({
       panel: "bugs",
       version: { id: null },
       bugs: { severity: "high", status: null },
@@ -28,7 +30,9 @@ describe("parse", () => {
   });
 
   it("coerces hostile values instead of throwing", () => {
-    const state = QueryParamsSchema.parse(at("?panel=nonsense&bugs.severity=BOGUS"));
+    const state = QueryParamsSchema.parse(
+      at("?panel=nonsense&bugs.severity=BOGUS"),
+    );
     expect(state.panel).toBeNull();
     expect(state.bugs.severity).toBeNull();
   });
@@ -36,7 +40,10 @@ describe("parse", () => {
 
 describe("patch", () => {
   it("writes a root key and a section key", () => {
-    const url = QueryParamsSchema.patch(at(), { panel: "bugs", bugs: { severity: "high" } });
+    const url = QueryParamsSchema.patch(at(), {
+      panel: "bugs",
+      bugs: { severity: "high" },
+    });
     expect(url.search).toBe("?panel=bugs&bugs.severity=high");
   });
 
@@ -51,16 +58,18 @@ describe("patch", () => {
     expect(QueryParamsSchema.patch(at("?panel=bugs"), { typo: 1 }).search).toBe(
       "?panel=bugs",
     );
-    // @ts-expect-error `nope` is not a codec of `bugs` (a compile time guard).
-    expect(QueryParamsSchema.patch(at("?panel=bugs"), { bugs: { nope: 1 } }).search).toBe(
-      "?panel=bugs",
-    );
+    expect(
+      // @ts-expect-error `nope` is not a codec of `bugs` (a compile time guard).
+      QueryParamsSchema.patch(at("?panel=bugs"), { bugs: { nope: 1 } }).search,
+    ).toBe("?panel=bugs");
   });
 });
 
 describe("clear", () => {
   it("removes only owned keys", () => {
-    const url = QueryParamsSchema.clear(at("?panel=bugs&bugs.severity=high&utm=keepme"));
+    const url = QueryParamsSchema.clear(
+      at("?panel=bugs&bugs.severity=high&utm=keepme"),
+    );
     expect(url.search).toBe("?utm=keepme");
   });
 });
