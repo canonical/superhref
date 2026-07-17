@@ -24,11 +24,11 @@ export type { AnyCodec, Codec, Codecs, Parsed } from "./core/types/codec.js";
 export type {
   ConfigValue,
   OwnedKey,
-  SuperhrefConfig,
   SuperhrefParsed,
   SuperhrefPatch,
   SuperhrefPatchInput,
-} from "./core/types/config.js";
+  SuperhrefSchema,
+} from "./core/types/schema.js";
 export type {
   Section as SectionSchema,
   SectionAction,

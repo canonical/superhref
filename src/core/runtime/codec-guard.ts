@@ -9,7 +9,7 @@
  */
 
 import type { AnyCodec, Codecs } from "../types/codec.js";
-import type { ConfigValue } from "../types/config.js";
+import type { ConfigValue } from "../types/schema.js";
 import type { AnyFunction } from "../types/util.js";
 
 /**

@@ -8,7 +8,7 @@ import { numCodec } from "../../codecs/number.js";
 import { strCodec } from "../../codecs/string.js";
 import { withActions } from "../../patterns/with-actions.js";
 import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
-import type { SuperhrefParsed, SuperhrefPatch } from "../types/config.js";
+import type { SuperhrefParsed, SuperhrefPatch } from "../types/schema.js";
 import { bind } from "./bind.js";
 
 const schema = {

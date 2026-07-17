@@ -5,8 +5,8 @@
 
 import type { AllRootMemberNames, ReservedRoot } from "./schema.js";
 
-export type ActionNameCollisions<C> = {
+export type ActionNameCollisions<S> = {
   [N in
-    | AllRootMemberNames<C>
+    | AllRootMemberNames<S>
     | ReservedRoot]?: `superhref: action "${N}" collides with the schema key or instance method "${N}"`;
 };
