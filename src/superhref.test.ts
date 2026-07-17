@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 
 import { enumCodec, strCodec, superhref } from "./index.js";
 
-const app = superhref({
+const QueryParamsSchema = superhref({
   panel: enumCodec(["overview", "version", "bugs"]),
   version: { id: strCodec() },
   bugs: {
@@ -20,7 +20,7 @@ const at = (search = ""): URL => new URL(`https://example.test/app${search}`);
 
 describe("parse", () => {
   it("reads nested state, raw keys, with defaults", () => {
-    expect(app.parse(at("?panel=bugs&bugs.severity=high"))).toEqual({
+    expect(QueryParamsSchema.parse(at("?panel=bugs&bugs.severity=high"))).toEqual({
       panel: "bugs",
       version: { id: null },
       bugs: { severity: "high", status: null },
@@ -28,7 +28,7 @@ describe("parse", () => {
   });
 
   it("coerces hostile values instead of throwing", () => {
-    const state = app.parse(at("?panel=nonsense&bugs.severity=BOGUS"));
+    const state = QueryParamsSchema.parse(at("?panel=nonsense&bugs.severity=BOGUS"));
     expect(state.panel).toBeNull();
     expect(state.bugs.severity).toBeNull();
   });
@@ -36,23 +36,23 @@ describe("parse", () => {
 
 describe("patch", () => {
   it("writes a root key and a section key", () => {
-    const url = app.patch(at(), { panel: "bugs", bugs: { severity: "high" } });
+    const url = QueryParamsSchema.patch(at(), { panel: "bugs", bugs: { severity: "high" } });
     expect(url.search).toBe("?panel=bugs&bugs.severity=high");
   });
 
   it("encodes string values for the URL (via URLSearchParams: space becomes +)", () => {
-    const url = app.patch(at(), { version: { id: "a b/c&d" } });
+    const url = QueryParamsSchema.patch(at(), { version: { id: "a b/c&d" } });
     expect(url.search).toBe("?version.id=a+b%2Fc%26d");
-    expect(app.parse(url).version.id).toBe("a b/c&d");
+    expect(QueryParamsSchema.parse(url).version.id).toBe("a b/c&d");
   });
 
   it("ignores unknown patch keys at runtime (types reject them at compile time)", () => {
     // @ts-expect-error `typo` is not in the schema (a compile time guard).
-    expect(app.patch(at("?panel=bugs"), { typo: 1 }).search).toBe(
+    expect(QueryParamsSchema.patch(at("?panel=bugs"), { typo: 1 }).search).toBe(
       "?panel=bugs",
     );
     // @ts-expect-error `nope` is not a codec of `bugs` (a compile time guard).
-    expect(app.patch(at("?panel=bugs"), { bugs: { nope: 1 } }).search).toBe(
+    expect(QueryParamsSchema.patch(at("?panel=bugs"), { bugs: { nope: 1 } }).search).toBe(
       "?panel=bugs",
     );
   });
@@ -60,7 +60,7 @@ describe("patch", () => {
 
 describe("clear", () => {
   it("removes only owned keys", () => {
-    const url = app.clear(at("?panel=bugs&bugs.severity=high&utm=keepme"));
+    const url = QueryParamsSchema.clear(at("?panel=bugs&bugs.severity=high&utm=keepme"));
     expect(url.search).toBe("?utm=keepme");
   });
 });
