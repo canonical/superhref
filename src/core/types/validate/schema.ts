@@ -3,22 +3,12 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-/**
- * Compile time validation of the schema's top level keys: syntax, reserved
- * names, and each section's own problems, surfaced as error string types at
- * the offending key.
- */
-
 import type { RESERVED_ROOT_NAMES } from "../../runtime/schema-guard.js";
 import type { AnyCodec } from "../codec.js";
 import type { SuperhrefConfig } from "../config.js";
 import type { InvalidKeyMsg, ValidKey } from "./key.js";
 import type { SectionHasProblem, SectionMsg } from "./section.js";
 
-/**
- * Method names on the bound object, forbidden as schema keys because a key
- * would shadow them.
- */
 export type ReservedRoot = (typeof RESERVED_ROOT_NAMES)[number];
 
 /**

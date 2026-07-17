@@ -3,12 +3,6 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-// Inference through the whole factory: schema in, precisely typed parse and
-// bind out. The instance shape itself is pinned in
-// `core/types/superhref.typestest.ts` and the validators next to their types
-// (validate/schema.typestest.ts, validate/actions.typestest.ts,
-// validate/section.typestest.ts); this file pins what the factory infers.
-
 import { enumCodec } from "./codecs/enum.js";
 import { numCodec } from "./codecs/number.js";
 import { strCodec } from "./codecs/string.js";
