@@ -29,7 +29,7 @@ type Dynamic = Record<string, any>;
  * `.set("parameter", value)` returns a new search string with that parameter
  * updated. The model itself is never mutated.
  *
- * @typeParam C The schema shape.
+ * @typeParam S The schema shape.
  * @typeParam A The top level action map.
  * @param ctx The runtime context carrying the schema and actions.
  * @param url The URL the model reads from; it is not modified.

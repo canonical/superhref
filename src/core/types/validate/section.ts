@@ -10,7 +10,6 @@
  * reports it exactly where the fix belongs.
  */
 
-import type { KeySep } from "../../runtime/keys.js";
 import type {
   RESERVED_ACTION_NAMES,
   RESERVED_CODEC_KEYS,
@@ -22,7 +21,7 @@ import type {
   ConfigValue,
   SuperhrefConfig,
 } from "../config.js";
-import type { ValidKey } from "./key.js";
+import type { InvalidKeyMsg, ValidKey } from "./key.js";
 
 /** `true` unless `T` is `never`. (Wrapping in a tuple stops union distribution.) */
 type NotNever<T> = [T] extends [never] ? false : true;
@@ -54,7 +53,7 @@ export type ValidateCodecs<S extends Codecs> = {
     ? K extends ReservedCodecKey
       ? `superhref: codec key "${K & string}" is reserved (patch/set/codecs/actions)`
       : S[K]
-    : `superhref: codec key "${K & string}" is not a valid URL key (letters/digits/_~- only, must start with a letter; "${KeySep}" is reserved)`;
+    : InvalidKeyMsg<"codec", K & string>;
 };
 
 type CodecKeys<V extends ConfigValue> = keyof CodecsOf<V> & string;

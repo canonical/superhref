@@ -3,6 +3,8 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
+import type { KeySep } from "../../runtime/keys.js";
+
 type Lower =
   | "a"
   | "b"
@@ -50,3 +52,8 @@ type AllKeyChars<S extends string> = S extends ""
 export type ValidKey<S extends string> = S extends `${Letter}${string}`
   ? AllKeyChars<S>
   : false;
+
+export type InvalidKeyMsg<
+  Kind extends string,
+  K extends string,
+> = `superhref: ${Kind} key "${K}" is not a valid URL key (letters/digits/_~- only, must start with a letter; "${KeySep}" is reserved)`;

@@ -7,34 +7,12 @@ import { describe, expect, it } from "vitest";
 
 import { enumCodec, numCodec, strCodec } from "../../codecs/index.js";
 import { withActions } from "../../patterns/index.js";
-import type { ActionMap } from "../types/bound.js";
-import type {
-  SuperhrefConfig,
-  SuperhrefParsed,
-  SuperhrefPatch,
-} from "../types/config.js";
-import type { Ctx } from "../types/context.js";
-import type { Empty } from "../types/util.js";
-import { bind } from "./bind.js";
-
-const makeCtx = <
-  C extends SuperhrefConfig,
-  A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>> = Empty,
->(
-  schema: C,
-  opts: {
-    actions?: A &
-      ActionMap<SuperhrefPatch<NoInfer<C>>, SuperhrefParsed<NoInfer<C>>>;
-  } = {},
-): Ctx<C, A> => ({
-  schema,
-  actions: (opts.actions ?? {}) as A,
-});
+import { superhref } from "../../superhref.js";
 
 const PANELS = ["overview", "version", "bugs"] as const;
 const SEVERITY = ["low", "high"] as const;
 
-const ctx = makeCtx(
+const QueryParamsSchema = superhref(
   {
     panel: enumCodec(PANELS),
     version: { id: strCodec() },
@@ -56,7 +34,8 @@ const ctx = makeCtx(
   },
 );
 
-const bindAt = (search = "") => bind(ctx, new URL(`https://x.test/${search}`));
+const bindAt = (search = "") =>
+  QueryParamsSchema.bind(new URL(`https://x.test/${search}`));
 
 describe("bind hoisted values", () => {
   it("hoists root and section values under their raw keys", () => {
@@ -139,6 +118,12 @@ describe("bind actions that span sections", () => {
       "?panel=version&version.id=1.2.3",
     );
   });
+
+  it("dispatches a root action that deletes its key", () => {
+    expect(bindAt("?panel=version&version.id=1.2.3").closePanel()).toBe(
+      "?version.id=1.2.3",
+    );
+  });
 });
 
 describe("bind closures over the url and state seen at bind time", () => {
@@ -158,7 +143,7 @@ describe("bind closures over the url and state seen at bind time", () => {
 
   it("does not mutate the bound URL", () => {
     const url = new URL("https://x.test/?panel=bugs");
-    const queryParams = bind(ctx, url);
+    const queryParams = QueryParamsSchema.bind(url);
     queryParams.set("panel", "version");
     queryParams.clear();
     expect(url.search).toBe("?panel=bugs");
