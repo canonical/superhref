@@ -15,7 +15,7 @@ import type {
   ResolvedActions,
 } from "./bound.js";
 import type { Codec } from "./codec.js";
-import type { SuperhrefParsed, SuperhrefPatch } from "./config.js";
+import type { SuperhrefParsed, SuperhrefPatch } from "./schema.js";
 import type { SectionPatch } from "./section.js";
 
 // `ResolvedAction` strips the leading (patch, state) and keeps the caller's

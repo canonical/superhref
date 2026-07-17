@@ -10,7 +10,6 @@
  * reports it exactly where the fix belongs.
  */
 
-import type { KeySep } from "../../runtime/keys.js";
 import type {
   RESERVED_ACTION_NAMES,
   RESERVED_CODEC_KEYS,
@@ -20,9 +19,9 @@ import type {
   ActionsOf,
   CodecsOf,
   ConfigValue,
-  SuperhrefConfig,
-} from "../config.js";
-import type { ValidKey } from "./key.js";
+  SuperhrefSchema,
+} from "../schema.js";
+import type { InvalidKeyMsg, ValidKey } from "./key.js";
 
 /** `true` unless `T` is `never`. (Wrapping in a tuple stops union distribution.) */
 type NotNever<T> = [T] extends [never] ? false : true;
@@ -54,7 +53,7 @@ export type ValidateCodecs<S extends Codecs> = {
     ? K extends ReservedCodecKey
       ? `superhref: codec key "${K & string}" is reserved (patch/set/codecs/actions)`
       : S[K]
-    : `superhref: codec key "${K & string}" is not a valid URL key (letters/digits/_~- only, must start with a letter; "${KeySep}" is reserved)`;
+    : InvalidKeyMsg<"codec", K & string>;
 };
 
 type CodecKeys<V extends ConfigValue> = keyof CodecsOf<V> & string;
@@ -77,14 +76,14 @@ export type SectionHasProblem<V extends ConfigValue> = true extends
   : false;
 
 /** The first matching message for a flagged section (only evaluated for bad sections). */
-export type SectionMsg<C extends SuperhrefConfig, K extends keyof C> = [
-  BadCodecKeys<C[K]>,
+export type SectionMsg<S extends SuperhrefSchema, K extends keyof S> = [
+  BadCodecKeys<S[K]>,
 ] extends [never]
-  ? [CodecKeys<C[K]> & ActionNames<C[K]>] extends [never]
-    ? [CodecKeys<C[K]> & ReservedCodecKey] extends [never]
-      ? [ActionNames<C[K]> & ReservedActionName] extends [never]
+  ? [CodecKeys<S[K]> & ActionNames<S[K]>] extends [never]
+    ? [CodecKeys<S[K]> & ReservedCodecKey] extends [never]
+      ? [ActionNames<S[K]> & ReservedActionName] extends [never]
         ? never
-        : `superhref: section "${K & string}" has an action named "${ActionNames<C[K]> & ReservedActionName}" (patch/set are reserved)`
-      : `superhref: section "${K & string}" has a reserved codec key "${CodecKeys<C[K]> & ReservedCodecKey}" (patch/set/codecs/actions)`
-    : `superhref: section "${K & string}" has a codec key and an action named "${CodecKeys<C[K]> & ActionNames<C[K]>}"`
-  : `superhref: section "${K & string}" has an invalid codec key "${BadCodecKeys<C[K]>}"`;
+        : `superhref: section "${K & string}" has an action named "${ActionNames<S[K]> & ReservedActionName}" (patch/set are reserved)`
+      : `superhref: section "${K & string}" has a reserved codec key "${CodecKeys<S[K]> & ReservedCodecKey}" (patch/set/codecs/actions)`
+    : `superhref: section "${K & string}" has a codec key and an action named "${CodecKeys<S[K]> & ActionNames<S[K]>}"`
+  : `superhref: section "${K & string}" has an invalid codec key "${BadCodecKeys<S[K]>}"`;

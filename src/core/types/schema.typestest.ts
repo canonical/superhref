@@ -17,7 +17,7 @@ import type {
   OwnedKey,
   SuperhrefParsed,
   SuperhrefPatchInput,
-} from "./config.js";
+} from "./schema.js";
 import type { Empty } from "./util.js";
 
 // A schema: one root key, one section with two codecs.

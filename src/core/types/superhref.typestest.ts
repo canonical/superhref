@@ -6,7 +6,7 @@
 import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import type { BoundSuperhref } from "./bound.js";
 import type { Codec } from "./codec.js";
-import type { SuperhrefParsed, SuperhrefPatch } from "./config.js";
+import type { SuperhrefParsed, SuperhrefPatch } from "./schema.js";
 import type { Superhref } from "./superhref.js";
 
 type Cfg = { panel: Codec<"open" | "closed">; bugs: { page: Codec<number> } };

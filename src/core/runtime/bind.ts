@@ -4,14 +4,14 @@
  */
 
 import type { ActionMap, BoundSuperhref } from "../types/bound.js";
+import type { Ctx } from "../types/context.js";
 import type {
   ConfigValue,
-  SuperhrefConfig,
   SuperhrefParsed,
   SuperhrefPatch,
   SuperhrefPatchInput,
-} from "../types/config.js";
-import type { Ctx } from "../types/context.js";
+  SuperhrefSchema,
+} from "../types/schema.js";
 import type { AnyFunction, Empty } from "../types/util.js";
 import { clear } from "./clear.js";
 import { isCodec, sectionOf } from "./codec-guard.js";
@@ -29,21 +29,21 @@ type Dynamic = Record<string, any>;
  * `.set("parameter", value)` returns a new search string with that parameter
  * updated. The model itself is never mutated.
  *
- * @typeParam C The schema shape.
+ * @typeParam S The schema shape.
  * @typeParam A The top level action map.
  * @param ctx The runtime context carrying the schema and actions.
  * @param url The URL the model reads from; it is not modified.
  * @returns The bound object with values, section handles, and methods.
  */
 export const bind = <
-  C extends SuperhrefConfig,
-  A extends ActionMap<SuperhrefPatch<C>, SuperhrefParsed<C>> = Empty,
+  S extends SuperhrefSchema,
+  A extends ActionMap<SuperhrefPatch<S>, SuperhrefParsed<S>> = Empty,
 >(
-  ctx: Ctx<C, A>,
+  ctx: Ctx<S, A>,
   url: URL,
-): BoundSuperhref<C, A> => {
+): BoundSuperhref<S, A> => {
   const patchStr = (partial: Dynamic) =>
-    patch(ctx, url, partial as SuperhrefPatchInput<C>).search || "?";
+    patch(ctx, url, partial as SuperhrefPatchInput<S>).search || "?";
   const state: Dynamic = parse(ctx, url);
 
   const queryParams: Dynamic = {
@@ -60,7 +60,7 @@ export const bind = <
     queryParams[actionName] = (...args: unknown[]) =>
       (actionHandler as AnyFunction)(patchStr, state, ...args);
 
-  return queryParams as unknown as BoundSuperhref<C, A>;
+  return queryParams as unknown as BoundSuperhref<S, A>;
 };
 
 function buildSection(
