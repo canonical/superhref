@@ -15,9 +15,9 @@ import type { Section } from "./section.js";
 import type { Empty, Pretty } from "./util.js";
 
 /**
- * A config value is one of three shapes, told apart by structure: a root
- * `Codec` with `parse` and `serialize`, a bare codecs map such as
- * `{ id: codec }` for a section with no actions, or `{ codecs, actions }`
+ * A config value is one of three shapes, told apart by structure: a root leaf
+ * (a low-level codec or direct Zod schema), a bare leaf map such as
+ * `{ id: z.string() }` for a section with no actions, or `{ codecs, actions }`
  * for a section with actions. The action map here is `any` so that any
  * concrete section is assignable to this type; the precise types are read
  * back from each value where they are needed.

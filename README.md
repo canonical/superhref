@@ -13,22 +13,31 @@ Malformed input never throws. Codecs coerce hostile or hand-edited values to a d
 ## Installation
 
 ```sh
-npm install @canonical/superhref
+npm install @canonical/superhref zod
 ```
 
-Requires Node.js 20 or later. The package ships ECMAScript modules (ESM) with TypeScript declarations and has no runtime dependencies.
+Requires Node.js 20 or later, TypeScript 5.4 or later, and Zod 4.6. The package
+ships ECMAScript modules (ESM) with TypeScript declarations.
 
 ## Quick start
 
 ```ts
-import { enumCodec, numCodec, strCodec, superhref } from "@canonical/superhref";
+import { superhref, zodCodec } from "@canonical/superhref";
+import * as z from "zod";
+
+const PageSchema = z.compile(
+  z.codec(z.string().regex(/^[1-9]\d*$/), z.int().min(1), {
+    decode: (value) => Number(value),
+    encode: (value) => String(value),
+  }),
+);
 
 const QueryParams = superhref({
-  panel: enumCodec(["overview", "version", "bugs"]),
+  panel: z.enum(["overview", "version", "bugs"]),
   bugs: {
-    severity: enumCodec(["low", "medium", "high", "critical"]),
-    page: numCodec({ default: 1, integer: true, min: 1 }),
-    q: strCodec(),
+    severity: z.enum(["low", "medium", "high", "critical"]),
+    page: zodCodec(PageSchema, { default: 1 }),
+    q: z.string(),
   },
 });
 
@@ -72,12 +81,16 @@ Because the bound object is a snapshot, reading a property never touches the URL
 Actions define a state transition once in the schema instead of repeating patch logic at every call site. Each action receives `patch`, the current parsed state, and any declared arguments. `bind` removes the first two parameters, so the bound method accepts only your arguments and returns a search string:
 
 ```ts
-import { numCodec, strCodec, superhref, withActions } from "@canonical/superhref";
+import { superhref, withActions } from "@canonical/superhref";
+import * as z from "zod";
 
 const QueryParams = superhref(
   {
     bugs: withActions(
-      { page: numCodec({ default: 1 }), q: strCodec() },
+      {
+        page: z.compile(z.string()),
+        q: z.compile(z.string()),
+      },
       {
         // Searching resets pagination, so encode that rule here.
         search: (patch, _state, q: string) => patch({ q, page: null }),
@@ -96,46 +109,84 @@ queryParams.reset();              // "?"
 
 ## Codecs
 
-A codec is a `parse`/`serialize` pair for one parameter. It converts a raw URL value to a typed value and back. The built-in codecs never throw because invalid input resolves to the codec's `default`, or to `null` when no default exists. A `default` also narrows the parsed type: `numCodec({ default: 1 })` returns `number`, while `numCodec()` returns `number | null`. Only `null` removes a key from the URL.
+A schema leaf can be a synchronous, bidirectional Zod schema or a low-level
+`Codec`. Use Zod schemas directly for ordinary URL values. Absent or invalid
+input then resolves to `null`; wrap a schema in `zodCodec` only when it needs a
+non-null default. Only `null` removes a key from the URL.
 
-### `strCodec(opts?)`
+### Zod schemas
 
-The string codec passes strings through unchanged. An absent key resolves to the default. However, the empty string is a real value: it serializes as an explicit `?key=` and parses back to `""` rather than the default.
-
-```ts
-const S = superhref({ q: strCodec(), tag: strCodec({ default: "all" }) });
-
-S.parse(new URL("https://x.test/")).tag;          // "all"
-S.patch(new URL("https://x.test/"), { q: "" }).search; // "?q="
-S.parse(new URL("https://x.test/?q=")).q;         // ""
-```
-
-### `numCodec(opts?)`
-
-The number codec coerces invalid input instead of throwing. Absent, empty, or nonnumeric input resolves to the default. An empty value counts as missing because `Number("")` evaluates to `0`, a common trap with hand-edited URLs. With `integer: true`, fractional input also resolves to the default. Values outside `min` or `max` clamp to the nearest bound instead of being rejected.
+Place synchronous, bidirectional Zod schemas directly at root or section
+leaves. Their encoded input must be URL text. Plain string schemas and enums
+work as-is; use a Zod codec when the application value has another type.
 
 ```ts
-const S = superhref({ page: numCodec({ default: 1, integer: true, min: 1, max: 500 }) });
-
-S.parse(new URL("https://x.test/?page=banana")).page; // 1
-S.parse(new URL("https://x.test/?page=2.5")).page;    // 1
-S.parse(new URL("https://x.test/?page=9999")).page;   // 500
+const NavigationParams = superhref({
+  panel: z.enum(["overview", "version", "bugs"]),
+  version: { id: z.string() },
+});
 ```
 
-### `enumCodec(values, opts?)`
-
-The enum codec accepts only members of `values`. Anything else, including an absent key, resolves to the default. The parsed value retains the literal union type of `values`, so the rest of your code can switch on it exhaustively.
+[`z.compile()`](https://zod.dev/blog/introducing-z-compile) is an optional
+parsing optimization that avoids repeatedly walking schemas on a hot path.
+Compilation does not change Zod's reverse encode path:
 
 ```ts
-const S = superhref({ sort: enumCodec(["asc", "desc"], { default: "asc" }) });
+import { superhref, zodCodec } from "@canonical/superhref";
+import * as z from "zod";
 
-S.parse(new URL("https://x.test/?sort=DESC")).sort; // "asc" (case matters)
-S.parse(new URL("https://x.test/")).sort;           // "asc"
+const PageSchema = z.compile(
+  z.codec(z.string().regex(/^[1-9]\d*$/), z.int().min(1), {
+    decode: (value) => Number(value),
+    encode: (value) => String(value),
+  }),
+);
+const StatusSchema = z.compile(z.enum(["open", "closed"]));
+
+const QueryParams = superhref({
+  page: zodCodec(PageSchema, { default: 1 }),
+  status: StatusSchema,
+});
+
+QueryParams.parse(new URL("https://x.test/?page=3&status=open"));
+// { page: 3, status: "open" }
+
+QueryParams.parse(new URL("https://x.test/?page=bad"));
+// { page: 1, status: null }
 ```
+
+`zod` is a peer dependency, so applications control the version in their
+bundle. Direct schemas use `safeParse`; absent or invalid URL input resolves to
+`null`. `zodCodec` adds a configured `default` and validates it through Zod's
+reverse encode path when the codec is constructed. Put defaults in
+`zodCodec(schema, { default })`, not in Zod's `.default()`; optional and
+nullable Zod schemas are unsupported because superhref models absence itself.
+Zod's `.catch()` still takes precedence for a malformed value that is present.
+
+Schemas must support Zod's reverse `encode` path. A patched value that violates
+the schema can raise a `ZodError`; a unidirectional `.transform()` schema raises
+`ZodEncodeError` whenever superhref serializes it. Use `z.codec()` for
+transformations that must round-trip through a URL.
+
+### Migrating from 0.1
+
+Version 0.2 removes the built-in codec helpers:
+
+| Removed helper | Replacement |
+| --- | --- |
+| `strCodec()` | `z.string()` |
+| `strCodec({ default: value })` | `zodCodec(z.string(), { default: value })` |
+| `enumCodec(values)` | `z.enum(values)` |
+| `numCodec(options)` | Define a bidirectional `z.codec()` as above; wrap it in `zodCodec()` only when it needs a default. |
 
 ### Custom codecs
 
-A custom codec is a plain object that satisfies the `Codec<T>` interface. Implement `parse(raw: string | null): T` and `serialize(value: T): string | null`. Keep `parse` total so it coerces hostile input instead of throwing. Any value that round-trips through a string fits, including dates, comma-separated lists, and bitmasks.
+A custom codec is a plain object that satisfies the `Codec<T>` interface.
+Implement `parse(raw: string | null): T` and
+`serialize(value: T | null): string | null`. Keep `parse` total so it coerces
+hostile input instead of throwing. Returning `null` from `serialize` removes
+the key. Any value that round-trips through a string fits, including dates,
+comma-separated lists, and bitmasks.
 
 ## API summary
 

@@ -4,9 +4,8 @@
  */
 
 /**
- * The codec contract and the types derived from it. `Codec` defines the
- * encode and decode pair itself; the remaining types let other modules
- * accept records of codecs and recover the value types they carry.
+ * The leaf schema contracts and the types derived from them. A leaf can be a
+ * low-level `Codec` or a synchronous, bidirectional Zod schema.
  */
 
 /**
@@ -33,29 +32,42 @@ export type Codec<T extends NonNullable<unknown> | null> = {
    * indistinguishable when the URL is parsed again.
    */
   serialize: (value: T | null) => string | null;
-  /**
-   * The value that absent or invalid input resolves to.
-   * @defaultValue `undefined`, an absent key parses to `null`.
-   */
-  default?: T;
+};
+
+export type ZodSafeParseResult<T> =
+  | { readonly success: true; readonly data: T }
+  | { readonly success: false };
+
+/**
+ * The structural Zod surface accepted as a schema leaf. An encoded input of
+ * `string` ensures the parsed value can round-trip through one URL parameter.
+ * The engine coerces forward parse failures to `null`; reverse encode failures
+ * propagate to the caller.
+ */
+export type ZodCompatibleSchema<T extends NonNullable<unknown>> = {
+  safeParse(value: unknown): ZodSafeParseResult<T>;
+  encode(value: T): string;
 };
 
 /**
- * The element type for a codec record. Uses `Codec<any>`, not `Codec<unknown>`: a `Codec`
- * is invariant in its value type (it's a `serialize` parameter), so `Codec<string>` is not
- * assignable to `Codec<unknown>`, which would make `extends Codecs` checks fail. The real
- * value type is recovered with `infer` from each concrete codec.
+ * Any supported leaf schema. `any` is required because both contracts are
+ * invariant in their value type through the encode/serialize parameter. The
+ * concrete value type is recovered with `infer` below.
  */
-// biome-ignore lint/suspicious/noExplicitAny: Codec is invariant in T, so Codec<unknown> breaks 'extends Codecs' checks (see above)
-export type AnyCodec = Codec<any>;
+// biome-ignore lint/suspicious/noExplicitAny: leaf schemas are invariant in their value type
+export type AnyCodec = Codec<any> | ZodCompatibleSchema<any>;
 export type Codecs = Record<string, AnyCodec>;
 
 /**
- * The value type a codec parses to. `Codec<T>` resolves to `T`; anything
- * that is not a codec resolves to `never`.
- * @example `CodecValue<Codec<string | null>>` resolves to `string | null`.
+ * The parsed value type of a leaf. A low-level `Codec<T>` controls absence
+ * itself. A direct Zod schema resolves absent or invalid URL input to `null`.
  */
-export type CodecValue<X> = X extends Codec<infer T> ? T : never;
+export type CodecValue<X> =
+  X extends Codec<infer T>
+    ? T
+    : X extends ZodCompatibleSchema<infer T>
+      ? T | null
+      : never;
 
 /**
  * The parsed value type of a codec record.

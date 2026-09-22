@@ -3,8 +3,9 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import { numCodec } from "../codecs/number.js";
-import { strCodec } from "../codecs/string.js";
+import * as z from "zod";
+
+import { zodCodec } from "../codecs/zod.js";
 import type { Codec, Parsed } from "../core/types/codec.js";
 import type { SectionActionMap, SectionPatch } from "../core/types/section.js";
 import type { SectionActionCollisions } from "../core/types/validate/section.js";
@@ -16,10 +17,18 @@ import type {
 } from "../type-testing/expect.js";
 import { withActions } from "./with-actions.js";
 
+const PageSchema = z.codec(z.string(), z.number(), {
+  decode: (value) => Number(value),
+  encode: (value) => String(value),
+});
+
 // `patch` and `state` are typed from the codecs, so actions need no
 // annotations; extra parameters (like `q` here) stay on the action's type.
 const bugs = withActions(
-  { page: numCodec({ default: 1 }), q: strCodec() },
+  {
+    page: zodCodec(PageSchema, { default: 1 }),
+    q: zodCodec(z.string()),
+  },
   {
     nextPage: (patch, state) => patch({ page: state.page + 1 }),
     search: (patch, _state, q: string) => patch({ q, page: null }),
@@ -61,7 +70,7 @@ type _patchWrongValue = ExpectFalse<Extends<{ page: "one" }, PatchArg>>;
 // which exists only at a literal call site, so there is no `Extends`
 // equivalent.
 withActions(
-  { page: numCodec({ default: 1 }) },
+  { page: zodCodec(PageSchema, { default: 1 }) },
   {
     // @ts-expect-error an action's `patch` accepts only this section's keys
     jump: (patch) => patch({ rogue: 2 }),

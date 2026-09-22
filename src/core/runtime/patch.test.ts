@@ -4,19 +4,24 @@
  */
 
 import { describe, expect, it } from "vitest";
+import * as z from "zod";
 
-import { enumCodec, numCodec, strCodec } from "../../codecs/index.js";
+import { zodCodec } from "../../codecs/index.js";
 import type { AnyCodec } from "../types/codec.js";
 import type { Ctx } from "../types/context.js";
 import { patch } from "./patch.js";
 
 const PANELS = ["overview", "version", "bugs"] as const;
+const PageSchema = z.codec(z.string().regex(/^[1-9]\d*$/), z.int().min(1), {
+  decode: (value) => Number(value),
+  encode: (value) => String(value),
+});
 const schema = {
-  panel: enumCodec(PANELS),
-  version: { id: strCodec() },
+  panel: zodCodec(z.enum(PANELS)),
+  version: { id: zodCodec(z.string()) },
   bugs: {
-    severity: enumCodec(["low", "high"]),
-    page: numCodec({ default: 1, integer: true, min: 1 }),
+    severity: zodCodec(z.enum(["low", "high"])),
+    page: zodCodec(PageSchema, { default: 1 }),
   },
 };
 const ctx: Ctx<typeof schema> = {

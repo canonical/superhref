@@ -1,6 +1,6 @@
 {
   "name": "@canonical/superhref",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Typed, composable URL search-param state.",
   "keywords": [
     "url",
@@ -64,7 +64,11 @@
     "@canonical/biome-config": "^0.28.0",
     "@vitest/coverage-v8": "^4.1.9",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.9",
+    "zod": "^4.6.5"
+  },
+  "peerDependencies": {
+    "zod": "^4.6.0"
   },
   "publishConfig": {
     "access": "public"

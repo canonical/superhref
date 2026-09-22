@@ -3,18 +3,26 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import { enumCodec } from "./codecs/enum.js";
-import { numCodec } from "./codecs/number.js";
-import { strCodec } from "./codecs/string.js";
+import * as z from "zod";
+
+import { zodCodec } from "./codecs/zod.js";
 import { withActions } from "./patterns/with-actions.js";
 import { superhref } from "./superhref.js";
 import type { Equal, ExpectTrue } from "./type-testing/expect.js";
 
+const PageSchema = z.codec(z.string(), z.number(), {
+  decode: (value) => Number(value),
+  encode: (value) => String(value),
+});
+
 const QueryParamsSchema = superhref(
   {
-    panel: enumCodec(["open", "closed"], { default: "closed" }),
+    panel: zodCodec(z.enum(["open", "closed"]), { default: "closed" }),
     bugs: withActions(
-      { page: numCodec({ default: 1 }), q: strCodec() },
+      {
+        page: zodCodec(PageSchema, { default: 1 }),
+        q: zodCodec(z.string()),
+      },
       { jump: (patch, _state, page: number) => patch({ page }) },
     ),
   },

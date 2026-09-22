@@ -18,7 +18,7 @@ export type ReservedRoot = (typeof RESERVED_ROOT_NAMES)[number];
  * codec or section) can't be that string, a bad schema fails to compile
  * exactly at the offending key.
  *
- * @example `superhref({ set: enumCodec(P) })` errors at `set`, a reserved key.
+ * @example `superhref({ set: zodCodec(StatusSchema) })` errors at `set`, a reserved key.
  */
 export type ValidateSchemaKeys<S extends SuperhrefSchema> = {
   [K in keyof S]: ValidKey<K & string> extends true

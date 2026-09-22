@@ -5,7 +5,7 @@
 
 import type { Ctx } from "../types/context.js";
 import type { SuperhrefParsed, SuperhrefSchema } from "../types/schema.js";
-import { isCodec, sectionOf } from "./codec-guard.js";
+import { isCodec, parseCodec, sectionOf } from "./codec-guard.js";
 import { innerKey } from "./keys.js";
 
 /**
@@ -27,13 +27,13 @@ export function parse<S extends SuperhrefSchema>(
 
   for (const [key, schemaValue] of Object.entries(ctx.schema)) {
     if (isCodec(schemaValue)) {
-      queryParams[key] = schemaValue.parse(params.get(key));
+      queryParams[key] = parseCodec(schemaValue, params.get(key));
     } else {
       const section: Record<string, unknown> = {};
       for (const [subkey, codec] of Object.entries(
         sectionOf(schemaValue).codecs,
       )) {
-        section[subkey] = codec.parse(params.get(innerKey(key, subkey)));
+        section[subkey] = parseCodec(codec, params.get(innerKey(key, subkey)));
       }
       queryParams[key] = section;
     }

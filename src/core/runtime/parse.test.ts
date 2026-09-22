@@ -4,14 +4,15 @@
  */
 
 import { describe, expect, it } from "vitest";
+import * as z from "zod";
 
-import { enumCodec, strCodec } from "../../codecs/index.js";
+import { zodCodec } from "../../codecs/index.js";
 import type { Ctx } from "../types/context.js";
 import { parse } from "./parse.js";
 
 const schema = {
-  panel: enumCodec(["overview", "version", "bugs"]),
-  version: { id: strCodec() },
+  panel: zodCodec(z.enum(["overview", "version", "bugs"])),
+  version: { id: zodCodec(z.string()) },
 };
 
 const ctx: Ctx<typeof schema> = {
