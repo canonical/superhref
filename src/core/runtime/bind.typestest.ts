@@ -3,22 +3,29 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import { enumCodec } from "../../codecs/enum.js";
-import { numCodec } from "../../codecs/number.js";
-import { strCodec } from "../../codecs/string.js";
+import * as z from "zod";
+
+import { zodCodec } from "../../codecs/zod.js";
 import { withActions } from "../../patterns/with-actions.js";
 import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import type { SuperhrefParsed, SuperhrefPatch } from "../types/schema.js";
 import { bind } from "./bind.js";
 
+const PageSchema = z.codec(z.string(), z.number(), {
+  decode: (value) => Number(value),
+  encode: (value) => String(value),
+});
 const schema = {
-  panel: enumCodec(["open", "closed"], { default: "closed" }),
-  q: strCodec(),
+  panel: zodCodec(z.enum(["open", "closed"]), { default: "closed" }),
+  q: zodCodec(z.string()),
   bugs: withActions(
-    { page: numCodec({ default: 1 }), severity: strCodec() },
+    {
+      page: zodCodec(PageSchema, { default: 1 }),
+      severity: zodCodec(z.string()),
+    },
     { jump: (patch, _state, page: number) => patch({ page }) },
   ),
-  filters: { tag: strCodec() },
+  filters: { tag: zodCodec(z.string()) },
 };
 type Schema = typeof schema;
 

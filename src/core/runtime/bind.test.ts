@@ -4,23 +4,30 @@
  */
 
 import { describe, expect, it } from "vitest";
+import * as z from "zod";
 
-import { enumCodec, numCodec, strCodec } from "../../codecs/index.js";
+import { zodCodec } from "../../codecs/index.js";
 import { withActions } from "../../patterns/index.js";
 import { superhref } from "../../superhref.js";
 
 const PANELS = ["overview", "version", "bugs"] as const;
 const SEVERITY = ["low", "high"] as const;
+const PageSchema = z.codec(z.string(), z.number(), {
+  decode: (value) => Number(value),
+  encode: (value) => String(value),
+});
 
 const QueryParamsSchema = superhref(
   {
-    panel: enumCodec(PANELS),
-    version: { id: strCodec() },
+    panel: zodCodec(z.enum(PANELS)),
+    version: { id: zodCodec(z.string()) },
     bugs: withActions(
-      { severity: enumCodec(SEVERITY), page: numCodec({ default: 1 }) },
       {
-        bump: (patch, state, by: number) =>
-          patch({ page: (state.page ?? 1) + by }),
+        severity: zodCodec(z.enum(SEVERITY)),
+        page: zodCodec(PageSchema, { default: 1 }),
+      },
+      {
+        bump: (patch, state, by: number) => patch({ page: state.page + by }),
         reset: (patch) => patch({ severity: null, page: null }),
       },
     ),

@@ -4,12 +4,13 @@
  */
 
 /**
- * Codecs bundled with superhref: plain strings, coercing numbers, and string
- * literal enums. Each one resolves hostile input to a default instead of
- * throwing.
+ * Zod integration for adapting synchronous schemas to URL parameter codecs.
  * @module codecs
  */
 
-export { enumCodec } from "./enum.js";
-export { numCodec } from "./number.js";
-export { strCodec } from "./string.js";
+export type {
+  ZodCodecOptions,
+  ZodCompatibleSchema,
+  ZodSafeParseResult,
+} from "./zod.js";
+export { zodCodec } from "./zod.js";

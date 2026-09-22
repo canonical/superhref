@@ -4,15 +4,16 @@
  */
 
 import { describe, expect, it } from "vitest";
+import * as z from "zod";
 
-import { enumCodec, strCodec, superhref } from "./index.js";
+import { superhref, zodCodec } from "./index.js";
 
 const QueryParamsSchema = superhref({
-  panel: enumCodec(["overview", "version", "bugs"]),
-  version: { id: strCodec() },
+  panel: zodCodec(z.enum(["overview", "version", "bugs"])),
+  version: { id: zodCodec(z.string()) },
   bugs: {
-    severity: enumCodec(["low", "medium", "high", "critical"]),
-    status: enumCodec(["open", "closed"]),
+    severity: zodCodec(z.enum(["low", "medium", "high", "critical"])),
+    status: zodCodec(z.enum(["open", "closed"])),
   },
 });
 
@@ -77,7 +78,7 @@ describe("clear", () => {
 describe("superhref guards the schema", () => {
   it("rejects a reserved schema key at construction", () => {
     // @ts-expect-error `patch` is a reserved key (a compile time guard).
-    expect(() => superhref({ patch: strCodec() })).toThrow(
+    expect(() => superhref({ patch: zodCodec(z.string()) })).toThrow(
       'superhref: schema key "patch" is reserved (patch/clear/set)',
     );
   });

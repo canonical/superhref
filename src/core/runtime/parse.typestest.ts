@@ -3,18 +3,26 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import { enumCodec } from "../../codecs/enum.js";
-import { numCodec } from "../../codecs/number.js";
-import { strCodec } from "../../codecs/string.js";
+import * as z from "zod";
+
+import { zodCodec } from "../../codecs/zod.js";
 import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import { parse } from "./parse.js";
+
+const PageSchema = z.codec(z.string(), z.number(), {
+  decode: (value) => Number(value),
+  encode: (value) => String(value),
+});
 
 // One schema with the value shapes parse distinguishes: root codecs (with and
 // without a default) and a section.
 const schema = {
-  panel: enumCodec(["open", "closed"], { default: "closed" }),
-  q: strCodec(),
-  bugs: { page: numCodec({ default: 1 }), severity: strCodec() },
+  panel: zodCodec(z.enum(["open", "closed"]), { default: "closed" }),
+  q: zodCodec(z.string()),
+  bugs: {
+    page: zodCodec(PageSchema, { default: 1 }),
+    severity: zodCodec(z.string()),
+  },
 };
 const parsed = parse({ schema, actions: {} }, new URL("https://x.test/"));
 

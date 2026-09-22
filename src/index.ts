@@ -11,7 +11,12 @@
  * @module superhref
  */
 
-export * from "./codecs/index.js";
+export type {
+  ZodCodecOptions,
+  ZodCompatibleSchema,
+  ZodSafeParseResult,
+} from "./codecs/zod.js";
+export { zodCodec } from "./codecs/zod.js";
 export type {
   ActionMap,
   BoundSuperhref,

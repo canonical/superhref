@@ -6,7 +6,7 @@
 import type { AnyCodec } from "../types/codec.js";
 import type { Ctx } from "../types/context.js";
 import type { SuperhrefPatchInput, SuperhrefSchema } from "../types/schema.js";
-import { isCodec, sectionOf } from "./codec-guard.js";
+import { isCodec, sectionOf, serializeCodec } from "./codec-guard.js";
 import { innerKey } from "./keys.js";
 
 /**
@@ -73,7 +73,7 @@ function applyKey(
     params.delete(fullKey);
     return;
   }
-  const s = codec.serialize(value);
+  const s = serializeCodec(codec, value);
   if (s === null) {
     params.delete(fullKey);
     return;

@@ -3,14 +3,22 @@
  * GNU Lesser General Public License version 3 (see the file LICENSE).
  */
 
-import { numCodec } from "../../codecs/number.js";
-import { strCodec } from "../../codecs/string.js";
+import * as z from "zod";
+
+import { zodCodec } from "../../codecs/zod.js";
 import type { Equal, ExpectTrue } from "../../type-testing/expect.js";
 import { patch } from "./patch.js";
 
+const PageSchema = z.codec(z.string(), z.number(), {
+  decode: (value) => Number(value),
+  encode: (value) => String(value),
+});
 const schema = {
-  panel: strCodec({ default: "all" }),
-  bugs: { page: numCodec({ default: 1 }), q: strCodec() },
+  panel: zodCodec(z.string(), { default: "all" }),
+  bugs: {
+    page: zodCodec(PageSchema, { default: 1 }),
+    q: zodCodec(z.string()),
+  },
 };
 const ctx = { schema, actions: {} };
 const url = new URL("https://x.test/");
